@@ -1,0 +1,12 @@
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\Billiards\bin\x86\Debug\Billiards.exe
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\Billiards\bin\x86\Debug\Billiards.pdb
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\Billiards\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\Billiards\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\Billiards\obj\x86\Debug\Billiards.exe
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\Billiards\obj\x86\Debug\Billiards.pdb
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\bin\x86\Debug\Billiards.exe
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\bin\x86\Debug\Billiards.pdb
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\obj\x86\Debug\Billiards.exe
+C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\obj\x86\Debug\Billiards.pdb
