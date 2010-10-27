@@ -1,3 +1,0 @@
-C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\Billiards\Content\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\Content\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\Projects\csc517billiards\Billiards\Content\obj\x86\Debug\ResolveAssemblyReference.cache
