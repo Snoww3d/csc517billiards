@@ -6,15 +6,15 @@
       <TargetPlatform>Windows</TargetPlatform>
       <BuildConfiguration>Debug</BuildConfiguration>
       <CompressContent>false</CompressContent>
-      <RootDirectory>C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\Content\</RootDirectory>
-      <LoggerRootDirectory>C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\</LoggerRootDirectory>
-      <IntermediateDirectory>C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\Content\obj\x86\Debug\</IntermediateDirectory>
-      <OutputDirectory>C:\Users\Shanon\Documents\Visual Studio 2008\Projects\Billiards\csc517billiards\Billiards\bin\x86\Debug\Content\</OutputDirectory>
+      <RootDirectory>C:\Projects\csc517billiards\Billiards\Content\</RootDirectory>
+      <LoggerRootDirectory>C:\Projects\csc517billiards\Billiards\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Projects\csc517billiards\Billiards\Content\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>C:\Projects\csc517billiards\Billiards\bin\x86\Debug\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>
         <Key>C:\Windows\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\3.1.0.0__6d5c3888ef60e27d\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
-        <Value>2010-10-24T13:55:48.78235-05:00</Value>
+        <Value>2010-10-27T08:46:35.113314-05:00</Value>
       </Assembly>
     </Assemblies>
   </Asset>
