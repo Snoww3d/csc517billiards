@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
-// test svn
+
 namespace Billiards
 {
     /// <summary>
@@ -20,11 +20,14 @@ namespace Billiards
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        private HainSphere.Sphere BilliardBallTest;
+        private HainSphere.Sphere BilliardBallTest2;
+        protected Matrix world;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = "Content/Images";
         }
 
         /// <summary>
@@ -36,7 +39,18 @@ namespace Billiards
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            //BilliardBallTest = new HainSphere.Sphere(this, 25, 20,
+            //   Content.Load<Texture2D>("Ball10"),
+            //   Matrix.Identity,
+            //   Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 700.0f), Vector3.Zero, Vector3.Up),
+            //   Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1f, 1000.0f));
+            //BilliardBallTest.Initialize();
+            BilliardBallTest2 = new HainSphere.Sphere(this, 25, 20,
+            Content.Load<Texture2D>("Ball1"),
+            Matrix.Identity,
+            Matrix.CreateLookAt(new Vector3(15.0f, 0.0f, 700.0f), Vector3.Zero, Vector3.Up),
+            Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1f, 1000.0f));
+            BilliardBallTest2.Initialize();
             base.Initialize();
         }
 
@@ -47,7 +61,10 @@ namespace Billiards
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            //this.Components.Add(BilliardBallTest);
+            this.Components.Add(BilliardBallTest2);
 
             // TODO: use this.Content to load your game content here
         }
@@ -74,6 +91,14 @@ namespace Billiards
 
             // TODO: Add your update logic here
 
+            MouseState ms = Mouse.GetState();
+            float yAngle = -180f + ((float)ms.X / GraphicsDevice.Viewport.Width) * 360f;
+            float xAngle = -89f + ((float)ms.Y / GraphicsDevice.Viewport.Height) * 178f;
+            world = Matrix.CreateRotationY(MathHelper.ToRadians(yAngle));
+            world *= Matrix.CreateRotationX(MathHelper.ToRadians(xAngle));
+            //BilliardBallTest.World = world;
+            BilliardBallTest2.World = world;
+
             base.Update(gameTime);
         }
 
@@ -84,9 +109,6 @@ namespace Billiards
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.AliceBlue);
-
-            // TODO: Add your drawing code here
-
             base.Draw(gameTime);
         }
     }
