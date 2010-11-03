@@ -18,11 +18,13 @@ namespace Billiards
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        Camera camera;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         private HainSphere.Sphere BilliardBallTest;
         private HainSphere.Sphere BilliardBallTest2;
-        protected Matrix world;
+        protected Matrix world = Matrix.Identity;
+        protected Model table;
 
         public Game1()
         {
@@ -45,7 +47,9 @@ namespace Billiards
             //   Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 700.0f), Vector3.Zero, Vector3.Up),
             //   Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1f, 1000.0f));
             //BilliardBallTest.Initialize();
-            BilliardBallTest2 = new HainSphere.Sphere(this, 25, 20,
+            camera = new Camera(this);
+            Components.Add(camera);
+            BilliardBallTest2 = new HainSphere.Sphere(this, 25, 100,
             Content.Load<Texture2D>("Ball1"),
             Matrix.Identity,
             Matrix.CreateLookAt(new Vector3(15.0f, 0.0f, 700.0f), Vector3.Zero, Vector3.Up),
@@ -63,6 +67,7 @@ namespace Billiards
             // Create a new SpriteBatch, which can be used to draw textures.
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            table = Content.Load<Model>(@"pooltable/pooltable");
             //this.Components.Add(BilliardBallTest);
             this.Components.Add(BilliardBallTest2);
 
@@ -90,12 +95,12 @@ namespace Billiards
                 this.Exit();
 
             // TODO: Add your update logic here
-
-            MouseState ms = Mouse.GetState();
-            float yAngle = -180f + ((float)ms.X / GraphicsDevice.Viewport.Width) * 360f;
-            float xAngle = -89f + ((float)ms.Y / GraphicsDevice.Viewport.Height) * 178f;
-            world = Matrix.CreateRotationY(MathHelper.ToRadians(yAngle));
-            world *= Matrix.CreateRotationX(MathHelper.ToRadians(xAngle));
+            //camera.Update(gameTime);
+            //MouseState ms = Mouse.GetState();
+            //float yAngle = -180f + ((float)ms.X / GraphicsDevice.Viewport.Width) * 360f;
+            //float xAngle = -89f + ((float)ms.Y / GraphicsDevice.Viewport.Height) * 178f;
+            //world = Matrix.CreateRotationY(MathHelper.ToRadians(yAngle));
+            //world *= Matrix.CreateRotationX(MathHelper.ToRadians(xAngle));
             //BilliardBallTest.World = world;
             BilliardBallTest2.World = world;
 
@@ -109,6 +114,17 @@ namespace Billiards
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.AliceBlue);
+            foreach (ModelMesh mesh in table.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.World = world;
+                    effect.View = camera.View;
+                    effect.Projection = camera.Projection;
+                }
+                mesh.Draw();
+            }
             base.Draw(gameTime);
         }
     }
