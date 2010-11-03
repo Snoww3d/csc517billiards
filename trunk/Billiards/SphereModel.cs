@@ -4,7 +4,6 @@
 // Purpose: Stack-tesselated model of sphere
 ////////////////////////////////////////////////////////////////
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,90 +14,60 @@ namespace HainSphere
         #region Members
         private int nVertices;
         private int nIndices;
-        private ushort tesselations;    // number latitude strips = number longitude slices/2
+        private short[] indices;
+        private VertexPositionNormalTexture[] vertices;
+        private short tesselations;    // number latitude strips = number longitude slices/2
         private float radius;
-        private GraphicsDevice graphics;
+        private GraphicsDevice device;
+        private Pool.Camera camera;
+        private Pool.PoolGame game;
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Sets or gets the texture of the sphere.
-        /// </summary>
         public Texture2D Texture { get; set; }
-        /// <summary>
-        /// Sets or gets the effect of the sphere.
-        /// </summary>
         public BasicEffect Effect { get; set; }
-        /// <summary>
-        /// Sets or gets the radius of the sphere.
-        /// </summary>
+        public Matrix World { get; set; }
+        public Matrix View { get; set; }
+        public Matrix Projection { get; set; }
+
         public float Radius
         {
             get { return radius; }
             set { radius = value; LoadContent(); }
         }
-        /// <summary>
-        /// Sets or gets the number of tesselations (latitude strips = 2x longitudinal slices) of the sphere. 
-        /// Keep less than or equal to 127, otherwise number of indices will exceed capacity of ushort.
-        /// Typically, 20 suffices.
-        /// </summary>
-        public ushort Tesselations
+
+        // Sets or gets the number of tesselations (latitude strips = 2x longitudinal slices) of the sphere. 
+        // Keep less than or equal to 127, otherwise number of indices will exceed capacity of short.
+        // Typically, 20 suffices.
+        public short Tesselations
         {
             get { return tesselations; }
             set { tesselations = value; LoadContent(); }
         }
-        /// <summary>
-        /// Sets or gets the world matrix of the sphere.
-        /// </summary>
-        public Matrix World { get; set; }
-        /// <summary>
-        /// Sets or gets the view matrix of the sphere.
-        /// </summary>
-        public Matrix View { get; set; }
-        /// <summary>
-        /// Sets or gets the projection matrix of the sphere.
-        /// </summary>
-        public Matrix Projection { get; set; }
         #endregion
 
         #region Constructors
-        /// <summary>
-        /// Constructor for the sphere class with a texture wrapping the sphere.
-        /// </summary>
-        /// <param name="game"></param>
-        /// <param name="tesselations"></param>
-        /// <param name="radius"></param>
-        /// <param name="texture"></param>
-        /// <param name="view"></param>
-        /// <param name="projection"></param>
-        public Sphere(Game game, ushort tesselations, float radius, Texture2D texture, Matrix world, Matrix view, Matrix projection)
+        public Sphere(Pool.PoolGame game, short tesselations, float radius, Texture2D texture, ref Matrix world, Pool.Camera camera)
             : base(game)
         {
             this.tesselations = tesselations;
             this.radius = radius;
             Texture = texture;
             World = world;
-            Projection = projection;
-            View = view;
+            this.camera = camera;
         }
         #endregion
 
-        #region Override
-        /// <summary>
-        /// Initializes the sphere (base).
-        /// </summary>
+        #region Overrides
         public override void Initialize()
         {
             base.Initialize();
         }
 
-        /// <summary>
-        /// Generate and load the model content for the sphere.
-        /// </summary>
         protected override void LoadContent()
         {
-            graphics = base.GraphicsDevice;
-            Effect = new BasicEffect(graphics, null);
+            device = ((Pool.PoolGame)Game).GraphicsDevice;
+            Effect = new BasicEffect(device, null);
             Effect.Projection = Projection;
             Effect.View = View;
 
@@ -107,44 +76,32 @@ namespace HainSphere
             Effect.EnableDefaultLighting();
             Effect.SpecularColor = Vector3.Zero;
 
-            graphics.VertexDeclaration = new VertexDeclaration(graphics, VertexPositionNormalTexture.VertexElements);
+            device.VertexDeclaration = new VertexDeclaration(device, VertexPositionNormalTexture.VertexElements);
             nVertices = (2 * tesselations + 1) * (tesselations + 1);
+            vertices = new VertexPositionNormalTexture[nVertices];
             nIndices = (2 * tesselations + 1) * (tesselations * 2);
-            VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[nVertices];
-            ushort[] indices = new ushort[nIndices];
+            indices = new short[nIndices];
             createVertices(this.tesselations, this.radius, ref vertices, ref indices);
-            VertexBuffer vertexBuffer = new VertexBuffer(graphics, typeof(VertexPositionNormalTexture), nVertices, BufferUsage.WriteOnly);
-            IndexBuffer indexBuffer = new IndexBuffer(graphics, typeof(ushort), indices.Length, BufferUsage.WriteOnly);
-            vertexBuffer.SetData(vertices);
-            indexBuffer.SetData(indices);
-            graphics.Vertices[0].SetSource(vertexBuffer, 0, VertexPositionNormalTexture.SizeInBytes);
-            graphics.Indices = indexBuffer;
             base.LoadContent();
         }
 
-        /// <summary>
-        /// Updates the sphere.
-        /// </summary>
-        /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// Draws the sphere.
-        /// </summary>
-        /// <param name="gameTime">Game time</param>
         public override void Draw(GameTime gameTime)
         {
             if (base.Visible)
             {
+                Effect.Projection = camera.Projection;
+                Effect.View = camera.View;
                 Effect.World = World;
                 Effect.Begin();
                 foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                 {
                     pass.Begin();
-                    graphics.DrawIndexedPrimitives(PrimitiveType.TriangleStrip, 0, 0, nVertices, 0, nIndices - 2);
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleStrip, vertices, 0, nVertices, indices, 0, nIndices - 2);
                     pass.End();
                 }
                 Effect.End();
@@ -155,19 +112,12 @@ namespace HainSphere
         #endregion
 
         #region Private Methods
-        /// <summary>
-        /// For sphere, create each vertex's location, normal, and texture coordinate, and well as triangle strip indices.
-        /// </summary>
-        /// <param name="Tesselations"> Number of latitude strips</param>
-        /// <param name="Radius">Radius of sphere</param>
-        /// <param name="vertices">vertex information array</param>
-        /// <param name="indices">index array</param>
-        private void createVertices(ushort tesselations, float radius, ref VertexPositionNormalTexture[] vertices, ref ushort[] indices)
+        private void createVertices(short tesselations, float radius, ref VertexPositionNormalTexture[] vertices, ref short[] indices)
         {
             // Fill vertex array (with normal, position, and texture coordinate)
             float StackAngle = MathHelper.Pi / tesselations;
             float y, r, sliceAngle;
-            ushort slices = (ushort)(2 * tesselations);  // longitudinal slices (2 * tesselations)
+            short slices = (short)(2 * tesselations);  // longitudinal slices (2 * tesselations)
 
             for (int stack = 0, ndxVertex = 0; stack <= tesselations; ++stack)
             {
@@ -183,11 +133,11 @@ namespace HainSphere
             }
 
             // Fill index array for TriangleStrip
-            for (ushort stack = 0, ndxVertex = 0, ndxIndex = 0; stack < tesselations; ++stack)
-                for (ushort slice = 0; slice <= slices; ++slice, ++ndxVertex)
+            for (short stack = 0, ndxVertex = 0, ndxIndex = 0; stack < tesselations; ++stack)
+                for (short slice = 0; slice <= slices; ++slice, ++ndxVertex)
                 {
                     indices[ndxIndex++] = ndxVertex;
-                    indices[ndxIndex++] = ((ushort)(ndxVertex + slices + 1));
+                    indices[ndxIndex++] = ((short)(ndxVertex + slices + 1));
                 }
         }
         #endregion
