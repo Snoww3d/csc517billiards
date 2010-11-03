@@ -20,13 +20,11 @@ namespace Billiards
     {
         Camera camera;
         GraphicsDeviceManager graphics;
-
-      
         protected Model table;
-        protected Model ball1;
+        protected Sphere ball1;
+        protected Texture2D texture1;
         protected Matrix world = Matrix.CreateWorld(new Vector3(0f, -0.2f, 0f), Vector3.Forward, Vector3.Up);
-        protected Matrix world2 = Matrix.CreateWorld(new Vector3(1f, -0.2f, 0f), Vector3.Forward, Vector3.Up);
-        //protected Model ball1;
+        protected Matrix world2 = Matrix.CreateWorld(new Vector3(0f, .5f, 0f), Vector3.Forward, Vector3.Up);
 
         public Game1()
         {
@@ -43,12 +41,11 @@ namespace Billiards
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
-
             camera = new Camera(this);
+            texture1 = Content.Load<Texture2D>(@"Images/1");
+            ball1 = new Sphere(this, 20, 25, texture1, ref world, camera);
+            Components.Add(ball1);
             Components.Add(camera);
-     
-
             base.Initialize();
         }
 
@@ -58,10 +55,8 @@ namespace Billiards
         /// </summary>
         protected override void LoadContent()
         {
-            table = Content.Load<Model>(@"Images/pooltable/pooltable");          
-            ball1 = Content.Load<Model>(@"Images/SphereHighPoly");
-           
-
+            table = Content.Load<Model>(@"Images/pooltable/pooltable");
+            
         }
 
         /// <summary>
@@ -104,29 +99,8 @@ namespace Billiards
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                 }
-            mesh.Draw();
-            }
-
-            foreach (ModelMesh mesh in ball1.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.World = world2;
-                    effect.View = camera.View;
-                    effect.Projection = camera.Projection;
-                }
                 mesh.Draw();
             }
-
-
-        
-         
-         
-          
-
-           // BilliardBallTest.World = world;
-           // BilliardBallTest.Draw(gameTime);
 
             base.Draw(gameTime);
         }
