@@ -20,16 +20,18 @@ namespace Billiards
     {
         Camera camera;
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        private HainSphere.Sphere BilliardBallTest;
-        private HainSphere.Sphere BilliardBallTest2;
-        protected Matrix world = Matrix.Identity;
+
+      
         protected Model table;
+        protected Model ball1;
+        protected Matrix world = Matrix.CreateWorld(new Vector3(0f, -0.2f, 0f), Vector3.Forward, Vector3.Up);
+        protected Matrix world2 = Matrix.CreateWorld(new Vector3(1f, -0.2f, 0f), Vector3.Forward, Vector3.Up);
+        //protected Model ball1;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content/Images";
+            Content.RootDirectory = "Content";
         }
 
         /// <summary>
@@ -41,20 +43,12 @@ namespace Billiards
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            //BilliardBallTest = new HainSphere.Sphere(this, 25, 20,
-            //   Content.Load<Texture2D>("Ball10"),
-            //   Matrix.Identity,
-            //   Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 700.0f), Vector3.Zero, Vector3.Up),
-            //   Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1f, 1000.0f));
-            //BilliardBallTest.Initialize();
+
+
             camera = new Camera(this);
             Components.Add(camera);
-            BilliardBallTest2 = new HainSphere.Sphere(this, 25, 100,
-            Content.Load<Texture2D>("Ball1"),
-            Matrix.Identity,
-            Matrix.CreateLookAt(new Vector3(15.0f, 0.0f, 700.0f), Vector3.Zero, Vector3.Up),
-            Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1f, 1000.0f));
-            BilliardBallTest2.Initialize();
+     
+
             base.Initialize();
         }
 
@@ -64,14 +58,10 @@ namespace Billiards
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
+            table = Content.Load<Model>(@"Images/pooltable/pooltable");          
+            ball1 = Content.Load<Model>(@"Images/SphereHighPoly");
+           
 
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            table = Content.Load<Model>(@"pooltable/pooltable");
-            //this.Components.Add(BilliardBallTest);
-            this.Components.Add(BilliardBallTest2);
-
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -93,17 +83,6 @@ namespace Billiards
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-
-            // TODO: Add your update logic here
-            //camera.Update(gameTime);
-            //MouseState ms = Mouse.GetState();
-            //float yAngle = -180f + ((float)ms.X / GraphicsDevice.Viewport.Width) * 360f;
-            //float xAngle = -89f + ((float)ms.Y / GraphicsDevice.Viewport.Height) * 178f;
-            //world = Matrix.CreateRotationY(MathHelper.ToRadians(yAngle));
-            //world *= Matrix.CreateRotationX(MathHelper.ToRadians(xAngle));
-            //BilliardBallTest.World = world;
-            BilliardBallTest2.World = world;
-
             base.Update(gameTime);
         }
 
@@ -113,7 +92,9 @@ namespace Billiards
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.AliceBlue);
+            GraphicsDevice.Clear(Color.AntiqueWhite);
+
+
             foreach (ModelMesh mesh in table.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -123,8 +104,30 @@ namespace Billiards
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                 }
+            mesh.Draw();
+            }
+
+            foreach (ModelMesh mesh in ball1.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.World = world2;
+                    effect.View = camera.View;
+                    effect.Projection = camera.Projection;
+                }
                 mesh.Draw();
             }
+
+
+        
+         
+         
+          
+
+           // BilliardBallTest.World = world;
+           // BilliardBallTest.Draw(gameTime);
+
             base.Draw(gameTime);
         }
     }
