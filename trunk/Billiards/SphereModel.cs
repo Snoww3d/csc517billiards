@@ -7,7 +7,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace HainSphere
+namespace Billiards
 {
     public class Sphere : DrawableGameComponent
     {
@@ -19,8 +19,9 @@ namespace HainSphere
         private short tesselations;    // number latitude strips = number longitude slices/2
         private float radius;
         private GraphicsDevice device;
-        private Pool.Camera camera;
-        private Pool.PoolGame game;
+
+        private Billiards.Camera camera;
+        private Billiards.Game1 game;
         #endregion
 
         #region Properties
@@ -47,9 +48,10 @@ namespace HainSphere
         #endregion
 
         #region Constructors
-        public Sphere(Pool.PoolGame game, short tesselations, float radius, Texture2D texture, ref Matrix world, Pool.Camera camera)
+        public Sphere(Billiards.Game1 game, short tesselations, float radius, Texture2D texture, ref Matrix world, Billiards.Camera camera)
             : base(game)
         {
+            this.game = game;
             this.tesselations = tesselations;
             this.radius = radius;
             Texture = texture;
@@ -66,7 +68,7 @@ namespace HainSphere
 
         protected override void LoadContent()
         {
-            device = ((Pool.PoolGame)Game).GraphicsDevice;
+            device = (game).GraphicsDevice;
             Effect = new BasicEffect(device, null);
             Effect.Projection = Projection;
             Effect.View = View;
@@ -105,7 +107,6 @@ namespace HainSphere
                     pass.End();
                 }
                 Effect.End();
-
                 base.Draw(gameTime);
             }
         }
