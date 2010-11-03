@@ -19,9 +19,8 @@ namespace Billiards
         private short tesselations;    // number latitude strips = number longitude slices/2
         private float radius;
         private GraphicsDevice device;
-
+        private VertexDeclaration vertexDeclaration;
         private Billiards.Camera camera;
-        private Billiards.Game1 game;
         #endregion
 
         #region Properties
@@ -51,7 +50,6 @@ namespace Billiards
         public Sphere(Billiards.Game1 game, short tesselations, float radius, Texture2D texture, ref Matrix world, Billiards.Camera camera)
             : base(game)
         {
-            this.game = game;
             this.tesselations = tesselations;
             this.radius = radius;
             Texture = texture;
@@ -68,7 +66,7 @@ namespace Billiards
 
         protected override void LoadContent()
         {
-            device = (game).GraphicsDevice;
+            device = ((Billiards.Game1)Game).GraphicsDevice;
             Effect = new BasicEffect(device, null);
             Effect.Projection = Projection;
             Effect.View = View;
@@ -78,7 +76,7 @@ namespace Billiards
             Effect.EnableDefaultLighting();
             Effect.SpecularColor = Vector3.Zero;
 
-            device.VertexDeclaration = new VertexDeclaration(device, VertexPositionNormalTexture.VertexElements);
+            vertexDeclaration = new VertexDeclaration(device, VertexPositionNormalTexture.VertexElements);
             nVertices = (2 * tesselations + 1) * (tesselations + 1);
             vertices = new VertexPositionNormalTexture[nVertices];
             nIndices = (2 * tesselations + 1) * (tesselations * 2);
@@ -103,10 +101,12 @@ namespace Billiards
                 foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                 {
                     pass.Begin();
+                    device.VertexDeclaration = vertexDeclaration;
                     device.DrawUserIndexedPrimitives(PrimitiveType.TriangleStrip, vertices, 0, nVertices, indices, 0, nIndices - 2);
                     pass.End();
                 }
                 Effect.End();
+
                 base.Draw(gameTime);
             }
         }
@@ -142,5 +142,6 @@ namespace Billiards
                 }
         }
         #endregion
+
     }
 }
