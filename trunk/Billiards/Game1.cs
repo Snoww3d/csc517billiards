@@ -23,8 +23,8 @@ namespace Billiards
         protected Model table;
         protected Sphere ball1;
         protected Texture2D ballTexture;
-        protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f, 0f, 0f), Vector3.Forward, Vector3.Up);
-        protected Matrix BallWorld = Matrix.CreateWorld(new Vector3(0.2f, 0.2f, 0.2f), Vector3.Forward, Vector3.Up);
+        protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f,-0.03f, 0f), Vector3.Forward, Vector3.Up);
+        protected Matrix BallWorld = Matrix.Identity;
 
         public Game1()
         {
@@ -41,8 +41,9 @@ namespace Billiards
         protected override void Initialize()
         {
             camera = new Camera(this);
-            ballTexture = Content.Load<Texture2D>(@"Images/1");
-            ball1 = new Sphere(this, 20, 250, ballTexture, ref BallWorld, camera);
+            ballTexture = Content.Load<Texture2D>(@"Images/Ball1");
+            ball1 = new Sphere(this, 20, .03f, ballTexture, ref BallWorld, camera);
+            ball1.Initialize();
         
             Components.Add(camera);
             Components.Add(ball1);
