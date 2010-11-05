@@ -68,8 +68,8 @@ namespace Billiards
         {
             device = ((Billiards.Game1)Game).GraphicsDevice;
             Effect = new BasicEffect(device, null);
-            Effect.Projection = Projection;
-            Effect.View = View;
+            Effect.Projection = camera.Projection;
+            Effect.View = camera.View;
 
             Effect.TextureEnabled = true;
             Effect.Texture = Texture;

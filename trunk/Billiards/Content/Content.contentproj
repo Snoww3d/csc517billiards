@@ -214,28 +214,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\PoolTable\pooltable-diffuse.png">
-      <Name>pooltable-diffuse</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Images\PoolTable\pooltable_final.FBX">
+    <Compile Include="PoolTable\pooltable_final.FBX">
       <Name>pooltable_final</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\PoolTable\pooltable.x">
+    <Compile Include="PoolTable\pooltable.x">
       <Name>pooltable</Name>
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\PoolTable\dark teak.jpg">
+    <Compile Include="PoolTable\dark teak.jpg">
       <Name>dark teak</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
