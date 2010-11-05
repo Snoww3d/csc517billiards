@@ -22,9 +22,9 @@ namespace Billiards
         GraphicsDeviceManager graphics;
         protected Model table;
         protected Sphere ball1;
-        protected Texture2D texture1;
-        protected Matrix world = Matrix.CreateWorld(new Vector3(0f, 0f, 0f), Vector3.Forward, Vector3.Up);
-        protected Matrix world2 = Matrix.CreateWorld(new Vector3(0f, 0f, 0f), Vector3.Forward, Vector3.Up);
+        protected Texture2D ballTexture;
+        protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f, 0f, 0f), Vector3.Forward, Vector3.Up);
+        protected Matrix BallWorld = Matrix.CreateWorld(new Vector3(0.2f, 0.2f, 0.2f), Vector3.Forward, Vector3.Up);
 
         public Game1()
         {
@@ -41,8 +41,8 @@ namespace Billiards
         protected override void Initialize()
         {
             camera = new Camera(this);
-            texture1 = Content.Load<Texture2D>(@"Images/EarthMap");
-            ball1 = new Sphere(this, 20, 250, texture1, ref world, camera);
+            ballTexture = Content.Load<Texture2D>(@"Images/1");
+            ball1 = new Sphere(this, 20, 250, ballTexture, ref BallWorld, camera);
         
             Components.Add(camera);
             Components.Add(ball1);
@@ -66,7 +66,7 @@ namespace Billiards
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+          
         }
 
         /// <summary>
@@ -90,17 +90,17 @@ namespace Billiards
         {
             GraphicsDevice.Clear(Color.White);
 
-
+            // Draw The Table
             foreach (ModelMesh mesh in table.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = world;
+                    effect.World = TableWorld;
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                 }
-              // mesh.Draw();
+              mesh.Draw();
             }
           
             base.Draw(gameTime);
