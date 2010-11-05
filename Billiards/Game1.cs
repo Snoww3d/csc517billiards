@@ -23,8 +23,8 @@ namespace Billiards
         protected Model table;
         protected Sphere ball1;
         protected Texture2D texture1;
-        protected Matrix world = Matrix.CreateWorld(new Vector3(0f, -0.2f, 0f), Vector3.Forward, Vector3.Up);
-        protected Matrix world2 = Matrix.CreateWorld(new Vector3(0f, .5f, 0f), Vector3.Forward, Vector3.Up);
+        protected Matrix world = Matrix.CreateWorld(new Vector3(0f, 0f, 0f), Vector3.Forward, Vector3.Up);
+        protected Matrix world2 = Matrix.CreateWorld(new Vector3(0f, 0f, 0f), Vector3.Forward, Vector3.Up);
 
         public Game1()
         {
@@ -40,12 +40,13 @@ namespace Billiards
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             camera = new Camera(this);
-            texture1 = Content.Load<Texture2D>(@"Images/1");
-            ball1 = new Sphere(this, 20, 25, texture1, ref world, camera);
-            Components.Add(ball1);
+            texture1 = Content.Load<Texture2D>(@"Images/EarthMap");
+            ball1 = new Sphere(this, 20, 250, texture1, ref world, camera);
+        
             Components.Add(camera);
+            Components.Add(ball1);
+            
             base.Initialize();
         }
 
@@ -55,7 +56,7 @@ namespace Billiards
         /// </summary>
         protected override void LoadContent()
         {
-            table = Content.Load<Model>(@"Images/pooltable/pooltable");
+            table = Content.Load<Model>(@"PoolTable/pooltable");
             
         }
 
@@ -87,7 +88,7 @@ namespace Billiards
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.AntiqueWhite);
+            GraphicsDevice.Clear(Color.White);
 
 
             foreach (ModelMesh mesh in table.Meshes)
@@ -99,9 +100,9 @@ namespace Billiards
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                 }
-                mesh.Draw();
+              // mesh.Draw();
             }
-
+          
             base.Draw(gameTime);
         }
     }
