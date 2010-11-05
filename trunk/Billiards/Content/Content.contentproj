@@ -214,29 +214,23 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PoolTable\pooltable_final.FBX">
-      <Name>pooltable_final</Name>
+    <Compile Include="Images\SphereHighPoly.fbx">
+      <Name>SphereHighPoly</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="PoolTable\pooltable.x">
-      <Name>pooltable</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="PoolTable\dark teak.jpg">
       <Name>dark teak</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Images\SphereHighPoly.fbx">
-      <Name>SphereHighPoly</Name>
+    <Compile Include="PoolTable\pooltable.x">
+      <Name>pooltable</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="PoolTable\pooltable_final.FBX">
+      <Name>pooltable_final</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
