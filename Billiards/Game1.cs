@@ -24,7 +24,7 @@ namespace Billiards
         protected Sphere ball1;
         protected Texture2D ballTexture;
         protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f,-0.03f, 0f), Vector3.Forward, Vector3.Up);
-        protected Matrix BallWorld = Matrix.Identity;
+        protected Matrix BallWorld = Matrix.CreateWorld(new Vector3(.58f, 0f, 0f), Vector3.Right, Vector3.Up);        
 
         public Game1()
         {
@@ -50,7 +50,7 @@ namespace Billiards
             
             base.Initialize();
         }
-
+        
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -81,6 +81,9 @@ namespace Billiards
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
             base.Update(gameTime);
+         
+          //  ball1.World *= Matrix.CreateTranslation(0, 0, -MathHelper.PiOver2);
+         
         }
 
         /// <summary>
