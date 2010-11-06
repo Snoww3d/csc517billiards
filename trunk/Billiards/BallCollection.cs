@@ -195,8 +195,9 @@ namespace Billiards
 
             foreach (Sphere ball in StationaryBalls)
             {
-                game.Components.Add(ball);
+               game.Components.Add(ball);
             }
+
 
         }
 
@@ -206,6 +207,7 @@ namespace Billiards
         /// </summary>
         public override void Initialize()
         {
+         
             base.Initialize();
         }
 
@@ -216,8 +218,10 @@ namespace Billiards
         public override void Update(GameTime gameTime)
         {
             // TODO: Add your update code here
-
+          CueBall.World *= Matrix.CreateTranslation(0.003f,0f,0f);
             base.Update(gameTime);
+
+            
         }
 
         public override void Draw(GameTime gameTime)
