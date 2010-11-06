@@ -44,7 +44,7 @@ namespace Billiards
 
             BallCollection bc = new BallCollection(this, camera);
 
-
+            Components.Add(bc);
 
             Components.Add(camera);
 
