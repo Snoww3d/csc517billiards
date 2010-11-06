@@ -12,6 +12,7 @@ namespace Billiards
     public class Sphere : DrawableGameComponent
     {
         #region Members
+        
         private int nVertices;
         private int nIndices;
         private short[] indices;

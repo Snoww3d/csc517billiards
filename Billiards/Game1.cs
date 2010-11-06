@@ -18,13 +18,13 @@ namespace Billiards
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        Camera camera;
-        GraphicsDeviceManager graphics;
+        public Camera camera;
+        public GraphicsDeviceManager graphics;
         protected Model table;
-        protected Sphere ball1;
-        protected Texture2D ballTexture;
-        protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f,-0.03f, 0f), Vector3.Forward, Vector3.Up);
-        protected Matrix BallWorld = Matrix.CreateWorld(new Vector3(.58f, 0f, 0f), Vector3.Right, Vector3.Up);        
+
+
+        protected List<Vector3> StartingPositions;
+        protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f, -0.03f, 0f), Vector3.Forward, Vector3.Up);
 
         public Game1()
         {
@@ -41,16 +41,19 @@ namespace Billiards
         protected override void Initialize()
         {
             camera = new Camera(this);
-            ballTexture = Content.Load<Texture2D>(@"Images/Ball1");
-            ball1 = new Sphere(this, 20, .03f, ballTexture, ref BallWorld, camera);
-            ball1.Initialize();
-        
+
+            BallCollection bc = new BallCollection(this, camera);
+
+
+
             Components.Add(camera);
-            Components.Add(ball1);
-            
+
+
+
+
             base.Initialize();
         }
-        
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -58,7 +61,7 @@ namespace Billiards
         protected override void LoadContent()
         {
             table = Content.Load<Model>(@"PoolTable/pooltable");
-            
+
         }
 
         /// <summary>
@@ -67,7 +70,7 @@ namespace Billiards
         /// </summary>
         protected override void UnloadContent()
         {
-          
+
         }
 
         /// <summary>
@@ -81,9 +84,10 @@ namespace Billiards
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
             base.Update(gameTime);
-         
-          //  ball1.World *= Matrix.CreateTranslation(0, 0, -MathHelper.PiOver2);
-         
+
+
+            // ball1.World *= Matrix.CreateTranslation(0, 0, -MathHelper.PiOver2);
+
         }
 
         /// <summary>
@@ -104,9 +108,9 @@ namespace Billiards
                     effect.View = camera.View;
                     effect.Projection = camera.Projection;
                 }
-              mesh.Draw();
+                mesh.Draw();
             }
-          
+
             base.Draw(gameTime);
         }
     }
