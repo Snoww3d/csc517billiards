@@ -279,8 +279,8 @@ namespace Billiards
                     float cx = (.5f * (d1x - d2x));
                     float by = u2 * d2x - u1 * d1x;
                     float bx = u2 * d2y - u1 * d1y;
-                    float ay = p2y;
-                    float ax = p2x;
+                    float ay = p2y - p1y;
+                    float ax = p2x - p1x;
                     float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
                     float B = 2 * ((by * cy) + (bx * cx));
                     float C = 2 * ((ay * cy) + (ax * cx));
