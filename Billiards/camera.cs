@@ -95,14 +95,18 @@ namespace Billiards
                 Cy = -0.2f;
 
 
-            World = Matrix.CreateWorld(new Vector3(Cx, -Cy, Cz), Vector3.Forward, Vector3.Up);
+          
 
             if (Keyboard.GetState().IsKeyDown(Keys.Q))
             {
+
+                World = Matrix.CreateWorld(new Vector3(Cx, -Cy, Cz), Vector3.Forward, Vector3.Up);
+                World *= Matrix.CreateTranslation(game.ballCollection.CueBall.World.Translation);
                 View = Matrix.CreateLookAt(World.Translation, game.ballCollection.CueBall.World.Translation, Vector3.Up);
             }
             else
             {
+                World = Matrix.CreateWorld(new Vector3(Cx, -Cy, Cz), Vector3.Forward, Vector3.Up);
                 View = Matrix.CreateLookAt(World.Translation, new Vector3(0.001f, 0f, 0f), Vector3.Up);
             }
           
