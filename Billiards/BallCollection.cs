@@ -270,6 +270,8 @@ namespace Billiards
                 float u1 = mball.speed;
                 foreach (Sphere cball in MovingBalls)
                 {
+                    if (cball.Equals(mball))
+                        continue;
                     float d2y = cball.direction.Z;
                     float p2y = cball.World.Translation.Z;
                     float d2x = cball.direction.X;
