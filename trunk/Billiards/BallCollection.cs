@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
-//using Billiards.QuarticClass;
 
 
 namespace Billiards
@@ -49,7 +48,7 @@ namespace Billiards
             : base(game)
         {
             this.game = game;
-            Matrix CueBallWorld = Matrix.CreateWorld(new Vector3(-1.1f, 0f, .53f), Vector3.Right, Vector3.Up);
+            Matrix CueBallWorld = Matrix.CreateWorld(new Vector3(-1.1f, 0f, 0f), Vector3.Right, Vector3.Up);
 
             Matrix Ball1World = Matrix.CreateWorld(new Vector3(.58f, 0f, 0f), new Vector3(1, -4f, 1), Vector3.Up);
             Matrix Ball15World = Matrix.CreateWorld(new Vector3(.63f, 0f, 0.05f), new Vector3(1, -4f, 1), Vector3.Up);
@@ -75,7 +74,7 @@ namespace Billiards
                                 ref CueBallWorld,
                                 camera);
 
-            CueBall.SetSpeedandAngle(1, 90);
+            //CueBall.SetSpeedandAngle(1, 90);
 
             ball1 = new Sphere(game,
                                   20,
@@ -224,12 +223,31 @@ namespace Billiards
         {
 
 
-
+            shotTime += 1000 / 60;
             if (MovingBalls.Count == 0)
                 shotTime = 0;
+            if (Keyboard.GetState().IsKeyDown(Keys.Q) && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            {
+                //CueBall.SetSpeedandAngle(5, (float)(-1 * MathHelper.PiOver2 +
+                    //Math.Asin((CueBall.camera.View.Translation.X - CueBall.World.Translation.X)
+                   // / Math.Sqrt(Math.Pow((CueBall.camera.View.Translation.X
+                   // - CueBall.World.Translation.X), 2) +
+                   // Math.Pow((CueBall.camera.View.Translation.Y
+                   // - CueBall.World.Translation.Y), 2)))));
+                CueBall.SetSpeedandAngle(5, (float)MathHelper.PiOver2);
+                MovingBalls.Add(CueBall);
+                CheckForCollisions();
+            }
             CueBall.World *= Matrix.CreateTranslation(CueBall.direction * CueBall.speed);
 
-
+            if (Collisions.Count > 0 && shotTime >= Collisions[0].collisionTime)
+            {
+                Collisions[0].collidee.SetSpeedandAngle(Collisions[0].collider.speed, MathHelper.PiOver2);
+                Collisions[0].collider.SetSpeedandAngle(0, 0);
+                Collisions.Remove(Collisions[0]);
+                MovingBalls.Remove(Collisions[0].collider);
+                CheckForCollisions();
+            }
             base.Update(gameTime);
         }
 
@@ -238,7 +256,7 @@ namespace Billiards
             base.Draw(gameTime);
         }
 
-        public void CheckForCollisions(Sphere ball)
+        public void CheckForCollisions()
         {
             foreach (Sphere mball in MovingBalls)
             {
@@ -274,12 +292,10 @@ namespace Billiards
                     QuarticClass.Quartic(dd, out sol, out soli, out nSol);
                     if (nSol == 4)
                     {
-                        ctime = (int)(1000 * sol.Min() + shotTime);
-                        //ctime = 1000 * Math.Min(sol[0], sol[1], sol[2], sol[3]) + shotTime;
+                        ctime = (int)(1000 * Math.Min(Math.Min(sol[0], sol[1]), Math.Min(sol[2], sol[3])) + shotTime);
                     }
                     else if (nSol == 2)
-                        ctime = (int)(1000 * sol.Min() + shotTime);
-                    // ctime = 1000 * Math.Min(sol[0], sol[1]) + shotTime;
+                        ctime = (int)(1000 * Math.Min(sol[0], sol[1]) + shotTime);
                     else
                         continue;
                     Collisions.Add(new Collision(game, ctime, mball, cball));
@@ -310,11 +326,9 @@ namespace Billiards
                     int ctime = 0;
                     QuarticClass.Quartic(dd, out sol, out soli, out nSol);
                     if (nSol == 4)
-                        ctime = (int)(1000 * sol.Min() + shotTime);
-                    // ctime = 1000 * Math.Min(sol[0], sol[1], sol[2], sol[3]) + shotTime;
+                        ctime = (int)(1000 * Math.Min(Math.Min(sol[0], sol[1]), Math.Min(sol[2], sol[3])) + shotTime);
                     else if (nSol == 2)
-                        ctime = (int)(1000 * sol.Min() + shotTime);
-                    // ctime = 1000 * Math.Min(sol[0], sol[1]) + shotTime;
+                        ctime = (int)(1000 * Math.Min(sol[0], sol[1]) + shotTime);
                     else
                         continue;
                     Collisions.Add(new Collision(game, ctime, mball, cball));

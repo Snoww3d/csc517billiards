@@ -21,7 +21,7 @@ namespace Billiards
         private float radius;
         private GraphicsDevice device;
         private VertexDeclaration vertexDeclaration;
-        private Billiards.Camera camera;
+        public Billiards.Camera camera;
         public float speed;
         public Vector3 direction;
         public double angle;
@@ -161,7 +161,7 @@ namespace Billiards
         {
             float TranslatedSpeed = Speed / 200f;
             this.speed = TranslatedSpeed;
-            this.angle = MathHelper.ToRadians(Angle);
+            this.angle = Angle;
             this.direction = new Vector3((float)Math.Sin(this.angle), 0f, (float)Math.Cos(this.angle));
 
         }
