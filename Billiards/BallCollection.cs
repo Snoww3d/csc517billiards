@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
-using Billiards.QuarticClass;
+//using Billiards.QuarticClass;
 
 
 namespace Billiards
@@ -75,7 +75,7 @@ namespace Billiards
                                 ref CueBallWorld,
                                 camera);
 
-           CueBall.SetSpeedandAngle(1, 90);
+            CueBall.SetSpeedandAngle(1, 90);
 
             ball1 = new Sphere(game,
                                   20,
@@ -222,14 +222,14 @@ namespace Billiards
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-          
-             
-            
+
+
+
             if (MovingBalls.Count == 0)
                 shotTime = 0;
             CueBall.World *= Matrix.CreateTranslation(CueBall.direction * CueBall.speed);
 
-          
+
             base.Update(gameTime);
         }
 
@@ -242,7 +242,7 @@ namespace Billiards
         {
             foreach (Sphere mball in MovingBalls)
             {
-                float a = .0005;
+                float a = .0005f;
                 float d1y = mball.direction.Z;
                 float p1y = mball.World.Translation.Z;
                 float d1x = mball.direction.X;
@@ -271,11 +271,15 @@ namespace Billiards
                     double[] dd = { A, B, C, D, E };
                     int nSol = 0;
                     int ctime = 0;
-                    QuarticClass.Quartic(dd, sol, soli, nSol);
+                    QuarticClass.Quartic(dd, out sol, out soli, out nSol);
                     if (nSol == 4)
-                        ctime = 1000 * Math.Min(sol[0], sol[1], sol[2], sol[3]) + shotTime;
+                    {
+                        ctime = (int)(1000 * sol.Min() + shotTime);
+                        //ctime = 1000 * Math.Min(sol[0], sol[1], sol[2], sol[3]) + shotTime;
+                    }
                     else if (nSol == 2)
-                        ctime = 1000 * Math.Min(sol[0], sol[1]) + shotTime;
+                        ctime = (int)(1000 * sol.Min() + shotTime);
+                    // ctime = 1000 * Math.Min(sol[0], sol[1]) + shotTime;
                     else
                         continue;
                     Collisions.Add(new Collision(game, ctime, mball, cball));
@@ -304,11 +308,13 @@ namespace Billiards
                     double[] dd = { A, B, C, D, E };
                     int nSol = 0;
                     int ctime = 0;
-                    QuarticClass.Quartic(dd, sol, soli, nSol);
+                    QuarticClass.Quartic(dd, out sol, out soli, out nSol);
                     if (nSol == 4)
-                        ctime = 1000 * Math.Min(sol[0], sol[1], sol[2], sol[3]) + shotTime;
+                        ctime = (int)(1000 * sol.Min() + shotTime);
+                    // ctime = 1000 * Math.Min(sol[0], sol[1], sol[2], sol[3]) + shotTime;
                     else if (nSol == 2)
-                        ctime = 1000 * Math.Min(sol[0], sol[1]) + shotTime;
+                        ctime = (int)(1000 * sol.Min() + shotTime);
+                    // ctime = 1000 * Math.Min(sol[0], sol[1]) + shotTime;
                     else
                         continue;
                     Collisions.Add(new Collision(game, ctime, mball, cball));
