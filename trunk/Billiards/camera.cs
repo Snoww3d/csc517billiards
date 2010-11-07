@@ -7,12 +7,15 @@ namespace Billiards
 {
     public class Camera : Microsoft.Xna.Framework.GameComponent
     {
+        Game1 game;
         float azimuthAngle = 0, altitudeAngle = 0, distance = 4;
+        public Matrix World { get; set; }
         public Matrix View { get; set; }
         public Matrix Projection { get; set; }
 
         public Camera(Game1 game) : base(game)
         {
+            this.game = game;
         }
 
         public override void Initialize()
@@ -36,11 +39,15 @@ namespace Billiards
             }
             else if (ms.RightButton == ButtonState.Pressed)
                 distance = MathHelper.Clamp(2 + ((float)ms.Y / Game.GraphicsDevice.Viewport.Width) * 4, 2f, 6f);
+            if (Keyboard.GetState().IsKeyDown(Keys.E))
+                View = Matrix.CreateLookAt(World.Translation, game.ballCollection.CueBall.World.Translation, Vector3.Up);
+            else
+            {
 
-            View = Matrix.CreateRotationY(azimuthAngle);
-            View *= Matrix.CreateRotationX(altitudeAngle);
-            View *= Matrix.CreateTranslation(0, 0, -distance);
-
+                View = Matrix.CreateRotationY(azimuthAngle);
+                View *= Matrix.CreateRotationX(altitudeAngle);
+                View *= Matrix.CreateTranslation(0, 0, -distance);
+            }
             base.Update(gameTime);
         }
     }

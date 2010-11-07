@@ -12,7 +12,7 @@ namespace Billiards
     public class Sphere : DrawableGameComponent
     {
         #region Members
-        
+
         private int nVertices;
         private int nIndices;
         private short[] indices;
@@ -91,6 +91,10 @@ namespace Billiards
 
         public override void Update(GameTime gameTime)
         {
+            if (this.speed > 0)
+                this.speed -= 0.000015f;
+            if (this.speed < 0)
+                this.speed = 0;
             base.Update(gameTime);
         }
 
@@ -146,6 +150,21 @@ namespace Billiards
                 }
         }
         #endregion
+
+        /// <summary>
+        /// Sets the Speed and Angle of the ball!!
+        /// </summary>
+        /// <param name="Speed">Scale 0-10</param>
+        /// <param name="Angle">in degrees on the z-axle</param>
+
+        public void SetSpeedandAngle(float Speed, float Angle)
+        {
+            float TranslatedSpeed = Speed / 200f;
+            this.speed = TranslatedSpeed;
+            this.angle = MathHelper.ToRadians(Angle);
+            this.direction = new Vector3((float)Math.Sin(this.angle), 0f, (float)Math.Cos(this.angle));
+
+        }
 
     }
 }
