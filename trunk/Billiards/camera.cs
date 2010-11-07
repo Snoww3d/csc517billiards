@@ -7,6 +7,11 @@ namespace Billiards
 {
     public class Camera : Microsoft.Xna.Framework.GameComponent
     {
+
+        float radius = 3.0f;
+        float theta = (3.0f * MathHelper.Pi) / 2.0f;
+        float phi = MathHelper.Pi;
+
         Game1 game;
         float azimuthAngle = 0, altitudeAngle = 0, distance = 4;
         public Matrix World { get; set; }
@@ -34,67 +39,85 @@ namespace Billiards
 
         public override void Update(GameTime gameTime)
         {
-            azimuthAngle = 0;
-            altitudeAngle = 0;
-            distance = 2;
+
+            // modified from directx code
+            // http://www.gamedev.net/community/forums/topic.asp?topic_id=443548
 
             MouseState ms = Mouse.GetState();
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                azimuthAngle = MathHelper.Pi / 60;
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                azimuthAngle = -MathHelper.Pi / 60;
-               
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                altitudeAngle = .1f;
-            
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                altitudeAngle = -0.1f;
-            }
+          
             if (ms.LeftButton == ButtonState.Pressed)
             {
-                
-                //azimuthAngle = MathHelper.Clamp(-MathHelper.Pi + ((float)ms.X / Game.GraphicsDevice.Viewport.Width) * MathHelper.TwoPi, -MathHelper.Pi, MathHelper.Pi);
-              //  altitudeAngle = MathHelper.Clamp(((float)ms.Y / Game.GraphicsDevice.Viewport.Height) * MathHelper.PiOver2, .01f, MathHelper.PiOver2 - .01f);
+
+                theta += MathHelper.Clamp(0.1f + ((float)ms.X / Game.GraphicsDevice.Viewport.Width) * 0.2f, -.1f, .1f);
+                phi += MathHelper.Clamp(0.1f + ((float)ms.X / Game.GraphicsDevice.Viewport.Height) * 0.2f, -.1f,.1f);
             }
-            else if (ms.RightButton == ButtonState.Pressed)
-                distance = MathHelper.Clamp(2 + ((float)ms.Y / Game.GraphicsDevice.Viewport.Width) * 4, 2f, 6f);
+          
+            if (ms.RightButton == ButtonState.Pressed)
+                radius = MathHelper.Clamp(1 + ((float)ms.Y / Game.GraphicsDevice.Viewport.Width) * 2, 1f, 5f);
+
+            float Cx, Cy, Cz;
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+
+                theta -= 0.1f;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                theta += 0.1f;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.N))
+                radius += 0.1f;
+            if (Keyboard.GetState().IsKeyDown(Keys.M))
+                radius -= 0.1f;
+
+            radius = MathHelper.Clamp(radius, 1f, 5f);
+
+
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                phi += 0.1f;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                phi -= 0.1f;
+
+            if (phi >= (MathHelper.Pi / 9) * 8)
+            {
+                phi = (MathHelper.Pi / 9) * 8;
+            }
+            if (phi <= (MathHelper.Pi / 9))
+            {
+                phi = (MathHelper.Pi / 9);
+            }
+
+            Cx = (float)(radius * Math.Cos((double)theta) * Math.Sin((double)phi));
+            Cy = (float)(radius * Math.Cos((double)phi));
+            Cz = (float)(radius * Math.Sin((double)theta) * Math.Sin((double)phi));
+
+            if (Cy > -0.2f)
+                Cy = -0.2f;
+
+
+            World = Matrix.CreateWorld(new Vector3(Cx, -Cy, Cz), Vector3.Forward, Vector3.Up);
+
             if (Keyboard.GetState().IsKeyDown(Keys.Q))
             {
-                float distance2 = 1;
-                if(ms.RightButton == ButtonState.Pressed)
-                    distance2 = MathHelper.Clamp(1 + ((float)ms.Y / Game.GraphicsDevice.Viewport.Width) * 2, 1f, 3f);  
-                View = Matrix.CreateLookAt(new Vector3(0, distance2, 0), game.ballCollection.CueBall.World.Translation, Vector3.Up);
-               
-                
-               // View *= Matrix.CreateRotationY(azimuthAngle);
-             
-
-             
-
+                View = Matrix.CreateLookAt(World.Translation, game.ballCollection.CueBall.World.Translation, Vector3.Up);
             }
             else
             {
-               // World *= Matrix.CreateRotationY(azimuthAngle);
-                World *= Matrix.CreateFromYawPitchRoll(0, altitudeAngle, 0);
-               //World *= Matrix.CreateFromYawPitchRoll(
-               //  azimuthAngle,
-               //  0,
-               //  0);
-               //// ;
-               // World *= Matrix.CreateRotationX(altitudeAngle);
-            // World *= Matrix.CreateTranslation(0, 0, -distance / 100);
-                //View = World;
-               View = Matrix.CreateLookAt(World.Translation, new Vector3(0.001f, 0f, 0f), Vector3.Up);
+                View = Matrix.CreateLookAt(World.Translation, new Vector3(0.001f, 0f, 0f), Vector3.Up);
             }
-            base.Update(gameTime);
+          
+
+
+
+
+
+
+           
+       
+
+
+
+                    base.Update(gameTime);
         }
     }
 }
