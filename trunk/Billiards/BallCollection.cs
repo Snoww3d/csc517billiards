@@ -314,13 +314,13 @@ namespace Billiards
                     float cx = (.5f * (d1x - d2x));
                     float by = u2 * d2x - u1 * d1x;
                     float bx = u2 * d2y - u1 * d1y;
-                    float ay = p2y;
-                    float ax = p2x;
+                    float ay = p2y - p1y;
+                    float ax = p2x - p1y;
                     float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
                     float B = 2 * ((by * cy) + (bx * cx));
                     float C = 2 * ((ay * cy) + (ax * cx));
                     float D = 2 * ((ay * by) + (ax * bx));
-                    float E = (float)(2 * Math.Pow(p2x, 2) + Math.Pow(p2x, 2) - 4 * cball.Radius * cball.Radius);
+                    float E = (float)(2 * Math.Pow(ay, 2) + Math.Pow(ax, 2) - 4 * cball.Radius * cball.Radius);
                     double[] sol = new double[4];
                     double[] soli = new double[4];
                     double[] dd = { A, B, C, D, E };
