@@ -236,6 +236,7 @@ namespace Billiards
                    // - CueBall.World.Translation.Y), 2)))));
                 CueBall.SetSpeedandAngle(5, (float)MathHelper.PiOver2);
                 MovingBalls.Add(CueBall);
+                StationaryBalls.Remove(CueBall);
                 CheckForCollisions();
             }
             CueBall.World *= Matrix.CreateTranslation(CueBall.direction * CueBall.speed);
@@ -244,8 +245,9 @@ namespace Billiards
             {
                 Collisions[0].collidee.SetSpeedandAngle(Collisions[0].collider.speed, MathHelper.PiOver2);
                 Collisions[0].collider.SetSpeedandAngle(0, 0);
-                Collisions.Remove(Collisions[0]);
                 MovingBalls.Remove(Collisions[0].collider);
+                MovingBalls.Add(Collisions[0].collidee);
+                Collisions.Remove(Collisions[0]);
                 CheckForCollisions();
             }
             base.Update(gameTime);
