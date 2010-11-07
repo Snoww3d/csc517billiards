@@ -51,12 +51,12 @@ namespace Billiards
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
             {
-                altitudeAngle = MathHelper.Pi / 60;
+                altitudeAngle = .1f;
             
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
             {
-                altitudeAngle = -MathHelper.Pi / 60;
+                altitudeAngle = -0.1f;
             }
             if (ms.LeftButton == ButtonState.Pressed)
             {
@@ -82,8 +82,8 @@ namespace Billiards
             }
             else
             {
-                World *= Matrix.CreateRotationY(azimuthAngle);
-                World *= Matrix.CreateRotationX(altitudeAngle);
+               // World *= Matrix.CreateRotationY(azimuthAngle);
+                World *= Matrix.CreateFromYawPitchRoll(0, altitudeAngle, 0);
                //World *= Matrix.CreateFromYawPitchRoll(
                //  azimuthAngle,
                //  0,
