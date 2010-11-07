@@ -19,9 +19,11 @@ namespace Billiards
     /// </summary>
     public class BallCollection : Microsoft.Xna.Framework.DrawableGameComponent
     {
-        private float ballRadius = 0.035f; 
+        private float ballRadius = 0.035f;
+        private int shotTime = 0;
         public List<Sphere> StationaryBalls = new List<Sphere>();
         public List<Sphere> MovingBalls = new List<Sphere>();
+        public List<Collision> Collisions = new List<Collision>();
 
 
         public Sphere CueBall;
@@ -44,7 +46,7 @@ namespace Billiards
         public BallCollection(Billiards.Game1 game, Camera camera)
             : base(game)
         {
-            Matrix CueBallWorld = Matrix.CreateWorld(new Vector3(-.58f, 0f, 0f), Vector3.Right, Vector3.Up);
+            Matrix CueBallWorld = Matrix.CreateWorld(new Vector3(-1.1f, 0f, .53f), Vector3.Right, Vector3.Up);
 
             Matrix Ball1World = Matrix.CreateWorld(new Vector3(.58f, 0f, 0f), Vector3.Right, Vector3.Up);
             Matrix Ball15World = Matrix.CreateWorld(new Vector3(.63f, 0f, 0.05f), Vector3.Right, Vector3.Up);
@@ -66,10 +68,12 @@ namespace Billiards
             CueBall = new Sphere(game,
                                 20,
                                 ballRadius,
-                                game.Content.Load<Texture2D>(@"Images/Ball1"),
+                                game.Content.Load<Texture2D>(@"Images/Ballcue"),
                                 ref CueBallWorld,
                                 camera);
-
+            CueBall.speed = .005f;
+            CueBall.angle = MathHelper.ToRadians(30.0f);
+            CueBall.direction = new Vector3((float)Math.Sin(CueBall.angle), 0f, (float)Math.Cos(CueBall.angle));  
             ball1 = new Sphere(game,
                                 20,
                                 ballRadius,
@@ -141,11 +145,11 @@ namespace Billiards
                             ref Ball10World,
                             camera);
             ball11 = new Sphere(game,
-                   20,
-                   ballRadius,
-                   game.Content.Load<Texture2D>(@"Images/Ball11"),
-                   ref Ball11World,
-                   camera);
+                           20,
+                           ballRadius,
+                           game.Content.Load<Texture2D>(@"Images/Ball11"),
+                           ref Ball11World,
+                           camera);
 
             ball12 = new Sphere(game,
                             20,
@@ -218,7 +222,9 @@ namespace Billiards
         public override void Update(GameTime gameTime)
         {
             // TODO: Add your update code here
-          CueBall.World *= Matrix.CreateTranslation(0.003f,0f,0f);
+            if (MovingBalls.Count == 0)
+                shotTime = 0;
+            CueBall.World *= Matrix.CreateTranslation(CueBall.direction * CueBall.speed);
             base.Update(gameTime);
 
             
@@ -230,6 +236,12 @@ namespace Billiards
 
             base.Draw(gameTime);
         }
-
+        public void CheckForCollisions(Sphere ball)
+        {
+            foreach (Sphere mball in MovingBalls)
+            {
+               //int time = (int)(1000 *  
+            }
+        }
     }
 }

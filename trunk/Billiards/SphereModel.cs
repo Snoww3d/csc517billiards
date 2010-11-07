@@ -22,6 +22,9 @@ namespace Billiards
         private GraphicsDevice device;
         private VertexDeclaration vertexDeclaration;
         private Billiards.Camera camera;
+        public float speed;
+        public Vector3 direction;
+        public double angle;
         #endregion
 
         #region Properties
