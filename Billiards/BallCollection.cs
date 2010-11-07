@@ -48,21 +48,21 @@ namespace Billiards
         {
             Matrix CueBallWorld = Matrix.CreateWorld(new Vector3(-1.1f, 0f, .53f), Vector3.Right, Vector3.Up);
 
-            Matrix Ball1World = Matrix.CreateWorld(new Vector3(.58f, 0f, 0f), Vector3.Right, Vector3.Up);
-            Matrix Ball15World = Matrix.CreateWorld(new Vector3(.63f, 0f, 0.05f), Vector3.Right, Vector3.Up);
-            Matrix Ball9World = Matrix.CreateWorld(new Vector3(.63f, 0f, -0.05f), Vector3.Right, Vector3.Up);
-            Matrix Ball2World = Matrix.CreateWorld(new Vector3(.68f, 0f, 0.1f), Vector3.Right, Vector3.Up);
-            Matrix Ball8World = Matrix.CreateWorld(new Vector3(.68f, 0f, 0.0f), Vector3.Right, Vector3.Up);
-            Matrix Ball6World = Matrix.CreateWorld(new Vector3(.68f, 0f, -0.1f), Vector3.Right, Vector3.Up);
-            Matrix Ball14World = Matrix.CreateWorld(new Vector3(.73f, 0f, 0.15f), Vector3.Right, Vector3.Up);
-            Matrix Ball10World = Matrix.CreateWorld(new Vector3(.73f, 0f, 0.05f), Vector3.Right, Vector3.Up);
-            Matrix Ball7World = Matrix.CreateWorld(new Vector3(.73f, 0f, -0.05f), Vector3.Right, Vector3.Up);
-            Matrix Ball13World = Matrix.CreateWorld(new Vector3(.73f, 0f, -0.15f), Vector3.Right, Vector3.Up);
-            Matrix Ball3World = Matrix.CreateWorld(new Vector3(.78f, 0f, 0.2f), Vector3.Right, Vector3.Up);
-            Matrix Ball11World = Matrix.CreateWorld(new Vector3(.78f, 0f, 0.1f), Vector3.Right, Vector3.Up);
-            Matrix Ball4World = Matrix.CreateWorld(new Vector3(.78f, 0f, 0.0f), Vector3.Right, Vector3.Up);
-            Matrix Ball12World = Matrix.CreateWorld(new Vector3(.78f, 0f, -0.1f), Vector3.Right, Vector3.Up);
-            Matrix Ball5World = Matrix.CreateWorld(new Vector3(.78f, 0f, -0.2f), Vector3.Right, Vector3.Forward);
+            Matrix Ball1World = Matrix.CreateWorld(new Vector3(.58f, 0f, 0f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball15World = Matrix.CreateWorld(new Vector3(.63f, 0f, 0.05f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball9World = Matrix.CreateWorld(new Vector3(.63f, 0f, -0.05f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball2World = Matrix.CreateWorld(new Vector3(.68f, 0f, 0.1f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball8World = Matrix.CreateWorld(new Vector3(.68f, 0f, 0.0f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball6World = Matrix.CreateWorld(new Vector3(.68f, 0f, -0.1f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball14World = Matrix.CreateWorld(new Vector3(.73f, 0f, 0.15f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball10World = Matrix.CreateWorld(new Vector3(.73f, 0f, 0.05f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball7World = Matrix.CreateWorld(new Vector3(.73f, 0f, -0.05f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball13World = Matrix.CreateWorld(new Vector3(.73f, 0f, -0.15f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball3World = Matrix.CreateWorld(new Vector3(.78f, 0f, 0.2f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball11World = Matrix.CreateWorld(new Vector3(.78f, 0f, 0.1f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball4World = Matrix.CreateWorld(new Vector3(.78f, 0f, 0.0f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball12World = Matrix.CreateWorld(new Vector3(.78f, 0f, -0.1f), new Vector3(1, -4f, 1), Vector3.Up);
+            Matrix Ball5World = Matrix.CreateWorld(new Vector3(.78f, 0f, -0.2f), new Vector3(1, -4f, 1), Vector3.Forward);
 
 
             CueBall = new Sphere(game,
@@ -71,15 +71,15 @@ namespace Billiards
                                 game.Content.Load<Texture2D>(@"Images/Ballcue"),
                                 ref CueBallWorld,
                                 camera);
-            CueBall.speed = .005f;
-            CueBall.angle = MathHelper.ToRadians(30.0f);
-            CueBall.direction = new Vector3((float)Math.Sin(CueBall.angle), 0f, (float)Math.Cos(CueBall.angle));  
+
+           // CueBall.SetSpeedandAngle(2, 90);
+
             ball1 = new Sphere(game,
-                                20,
-                                ballRadius,
-                                game.Content.Load<Texture2D>(@"Images/Ball1"),
-                                ref Ball1World,
-                                camera);
+                                  20,
+                                  ballRadius,
+                                  game.Content.Load<Texture2D>(@"Images/Ball1"),
+                                  ref Ball1World,
+                                  camera);
 
             ball2 = new Sphere(game,
                                 20,
@@ -199,10 +199,8 @@ namespace Billiards
 
             foreach (Sphere ball in StationaryBalls)
             {
-               game.Components.Add(ball);
+                game.Components.Add(ball);
             }
-
-
         }
 
         /// <summary>
@@ -211,7 +209,7 @@ namespace Billiards
         /// </summary>
         public override void Initialize()
         {
-         
+
             base.Initialize();
         }
 
@@ -221,26 +219,27 @@ namespace Billiards
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            // TODO: Add your update code here
+          
+             
+            
             if (MovingBalls.Count == 0)
                 shotTime = 0;
             CueBall.World *= Matrix.CreateTranslation(CueBall.direction * CueBall.speed);
-            base.Update(gameTime);
 
-            
+          
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
-
-
             base.Draw(gameTime);
         }
+
         public void CheckForCollisions(Sphere ball)
         {
             foreach (Sphere mball in MovingBalls)
             {
-               //int time = (int)(1000 *  
+                //int time = (int)(1000 *  
             }
         }
     }

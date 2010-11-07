@@ -19,12 +19,12 @@ namespace Billiards
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         public Camera camera;
+        public BallCollection ballCollection;
         public GraphicsDeviceManager graphics;
         protected Model table;
 
-
         protected List<Vector3> StartingPositions;
-        protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f, -0.03f, 0f), Vector3.Forward, Vector3.Up);
+        protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f, -0.035f, 0f), Vector3.Forward, Vector3.Up);
 
         public Game1()
         {
@@ -42,9 +42,9 @@ namespace Billiards
         {
             camera = new Camera(this);
 
-            BallCollection bc = new BallCollection(this, camera);
+            ballCollection = new BallCollection(this, camera);
 
-            Components.Add(bc);
+            Components.Add(ballCollection);
 
             Components.Add(camera);
 
@@ -83,6 +83,9 @@ namespace Billiards
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+              
+           
             base.Update(gameTime);
 
 
