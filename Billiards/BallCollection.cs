@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
+using Billiards.QuarticClass;
 
 
 namespace Billiards
@@ -19,6 +20,7 @@ namespace Billiards
     /// </summary>
     public class BallCollection : Microsoft.Xna.Framework.DrawableGameComponent
     {
+        private Game1 game;
         private float ballRadius = 0.035f;
         private int shotTime = 0;
         public List<Sphere> StationaryBalls = new List<Sphere>();
@@ -46,6 +48,7 @@ namespace Billiards
         public BallCollection(Billiards.Game1 game, Camera camera)
             : base(game)
         {
+            this.game = game;
             Matrix CueBallWorld = Matrix.CreateWorld(new Vector3(-1.1f, 0f, .53f), Vector3.Right, Vector3.Up);
 
             Matrix Ball1World = Matrix.CreateWorld(new Vector3(.58f, 0f, 0f), new Vector3(1, -4f, 1), Vector3.Up);
@@ -239,7 +242,78 @@ namespace Billiards
         {
             foreach (Sphere mball in MovingBalls)
             {
-                //int time = (int)(1000 *  
+                float a = .0005;
+                float d1y = mball.direction.Z;
+                float p1y = mball.World.Translation.Z;
+                float d1x = mball.direction.X;
+                float p1x = mball.World.Translation.X;
+                float u1 = mball.speed;
+                foreach (Sphere cball in MovingBalls)
+                {
+                    float d2y = cball.direction.Z;
+                    float p2y = cball.World.Translation.Z;
+                    float d2x = cball.direction.X;
+                    float p2x = cball.World.Translation.X;
+                    float u2 = cball.speed;
+                    float cy = (.5f * (d1y - d2y));
+                    float cx = (.5f * (d1x - d2x));
+                    float by = u2 * d2x - u1 * d1x;
+                    float bx = u2 * d2y - u1 * d1y;
+                    float ay = p2y;
+                    float ax = p2x;
+                    float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
+                    float B = 2 * ((by * cy) + (bx * cx));
+                    float C = 2 * ((ay * cy) + (ax * cx));
+                    float D = 2 * ((ay * by) + (ax * bx));
+                    float E = (float)(2 * Math.Pow(p2x, 2) + Math.Pow(p2x, 2) - 4 * cball.Radius * cball.Radius);
+                    double[] sol = new double[4];
+                    double[] soli = new double[4];
+                    double[] dd = { A, B, C, D, E };
+                    int nSol = 0;
+                    int ctime = 0;
+                    QuarticClass.Quartic(dd, sol, soli, nSol);
+                    if (nSol == 4)
+                        ctime = 1000 * Math.Min(sol[0], sol[1], sol[2], sol[3]) + shotTime;
+                    else if (nSol == 2)
+                        ctime = 1000 * Math.Min(sol[0], sol[1]) + shotTime;
+                    else
+                        continue;
+                    Collisions.Add(new Collision(game, ctime, mball, cball));
+                    Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
+                }
+                foreach (Sphere cball in StationaryBalls)
+                {
+                    float d2y = cball.direction.Z;
+                    float p2y = cball.World.Translation.Z;
+                    float d2x = cball.direction.X;
+                    float p2x = cball.World.Translation.X;
+                    float u2 = cball.speed;
+                    float cy = (.5f * (d1y - d2y));
+                    float cx = (.5f * (d1x - d2x));
+                    float by = u2 * d2x - u1 * d1x;
+                    float bx = u2 * d2y - u1 * d1y;
+                    float ay = p2y;
+                    float ax = p2x;
+                    float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
+                    float B = 2 * ((by * cy) + (bx * cx));
+                    float C = 2 * ((ay * cy) + (ax * cx));
+                    float D = 2 * ((ay * by) + (ax * bx));
+                    float E = (float)(2 * Math.Pow(p2x, 2) + Math.Pow(p2x, 2) - 4 * cball.Radius * cball.Radius);
+                    double[] sol = new double[4];
+                    double[] soli = new double[4];
+                    double[] dd = { A, B, C, D, E };
+                    int nSol = 0;
+                    int ctime = 0;
+                    QuarticClass.Quartic(dd, sol, soli, nSol);
+                    if (nSol == 4)
+                        ctime = 1000 * Math.Min(sol[0], sol[1], sol[2], sol[3]) + shotTime;
+                    else if (nSol == 2)
+                        ctime = 1000 * Math.Min(sol[0], sol[1]) + shotTime;
+                    else
+                        continue;
+                    Collisions.Add(new Collision(game, ctime, mball, cball));
+                    Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
+                }
             }
         }
     }

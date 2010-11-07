@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WindowsFormsApplication1
+namespace Billiards
 {
     static class QuarticClass
     {
