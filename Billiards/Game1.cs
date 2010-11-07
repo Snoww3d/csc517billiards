@@ -21,6 +21,7 @@ namespace Billiards
         public Camera camera;
         public BallCollection ballCollection;
         public GraphicsDeviceManager graphics;
+
         protected Model table;
 
         protected List<Vector3> StartingPositions;

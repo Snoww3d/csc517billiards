@@ -75,7 +75,7 @@ namespace Billiards
                                 ref CueBallWorld,
                                 camera);
 
-           // CueBall.SetSpeedandAngle(2, 90);
+           CueBall.SetSpeedandAngle(1, 90);
 
             ball1 = new Sphere(game,
                                   20,
