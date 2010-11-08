@@ -50,6 +50,8 @@ namespace Billiards
             Components.Add(camera);
 
 
+            FrameRateDisplay frameRateDisplay = new FrameRateDisplay(this);
+            Components.Add(frameRateDisplay);
 
 
             base.Initialize();
@@ -85,8 +87,8 @@ namespace Billiards
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-              
-           
+
+
             base.Update(gameTime);
 
 
