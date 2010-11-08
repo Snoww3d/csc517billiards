@@ -13,6 +13,7 @@ namespace Billiards
     {
         #region Members
 
+        public string name;
         private int nVertices;
         private int nIndices;
         private short[] indices;
@@ -51,7 +52,7 @@ namespace Billiards
         #endregion
 
         #region Constructors
-        public Sphere(Billiards.Game1 game, short tesselations, float radius, Texture2D texture, ref Matrix world, Billiards.Camera camera)
+        public Sphere(Billiards.Game1 game, string ballName, short tesselations, float radius, Texture2D texture, ref Matrix world, Billiards.Camera camera)
             : base(game)
         {
             this.tesselations = tesselations;
@@ -59,6 +60,7 @@ namespace Billiards
             Texture = texture;
             World = world;
             this.camera = camera;
+            this.name = ballName;
         }
         #endregion
 
@@ -96,6 +98,8 @@ namespace Billiards
             if (this.speed < 0)
                 this.speed = 0;
             base.Update(gameTime);
+
+            World *= Matrix.CreateTranslation(direction * speed);
         }
 
         public override void Draw(GameTime gameTime)
