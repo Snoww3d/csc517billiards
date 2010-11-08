@@ -14,6 +14,7 @@ namespace Billiards
         #region Members
 
         public string name;
+
         private int nVertices;
         private int nIndices;
         private short[] indices;
@@ -24,6 +25,7 @@ namespace Billiards
         private VertexDeclaration vertexDeclaration;
         public Billiards.Camera camera;
         public float speed;
+        private float TranslatedSpeed;
         public Vector3 direction;
         public double angle;
         #endregion
@@ -94,12 +96,60 @@ namespace Billiards
         public override void Update(GameTime gameTime)
         {
             if (this.speed > 0)
-                this.speed -= 0.000015f;
+                this.speed -= 0.00009f;
             if (this.speed < 0)
                 this.speed = 0;
             base.Update(gameTime);
+            Vector3 scale;
+            Quaternion sdfj;
+            Vector3 translation;
+            World.Decompose(out scale, out sdfj, out translation);
+            World *= Matrix.CreateTranslation(-translation);
+            float radX = (direction.X) * speed / radius;
+            float radY = (direction.Z) * speed / radius ;
+            while (Math.Abs(radX) > MathHelper.TwoPi)
+            {
+                radX -= MathHelper.TwoPi * ((radX <= 0) ? -1 : 1);
+            }
+            while (Math.Abs(radY) > MathHelper.TwoPi)
+            {
+                radY -= MathHelper.TwoPi * ((radY <= 0) ? -1 : 1);
+            }
+            World *= Matrix.CreateRotationZ(-radX);
+            World *= Matrix.CreateRotationX(radY);
 
+
+            World *= Matrix.CreateTranslation(translation);
+           // World *= Matrix.CreateFromYawPitchRoll((direction.X) *   speed  / radius,(direction.Z) *   speed  / radius,0);
+            //  World *= Matrix.CreateRotationZ(.1f);
             World *= Matrix.CreateTranslation(direction * speed);
+
+
+            if (World.Translation.X > 1.1)
+            {
+                World *= Matrix.CreateTranslation(new Vector3(-0.01f, 0, 0));
+                direction.X *= -1;
+
+            }
+            else if (World.Translation.X < -1.1)
+            {
+                World *= Matrix.CreateTranslation(new Vector3(0.01f, 0, 0));
+                direction.X *= -1;
+
+            }
+            else if (World.Translation.Z > .53)
+            {
+                World *= Matrix.CreateTranslation(new Vector3(0, 0, -0.01f));
+                direction.Z *= -1;
+
+            }
+            else if (World.Translation.Z < -.53)
+            {
+                World *= Matrix.CreateTranslation(new Vector3(0, 0, 0.01f));
+                direction.Z *= -1;
+
+            }
+
         }
 
         public override void Draw(GameTime gameTime)
@@ -163,7 +213,7 @@ namespace Billiards
 
         public void SetSpeedandAngle(float Speed, float Angle)
         {
-            float TranslatedSpeed = Speed / 200f;
+            TranslatedSpeed = Speed / 200f;
             this.speed = TranslatedSpeed;
             this.angle = Angle;
             this.direction = new Vector3((float)Math.Sin(this.angle), 0f, (float)Math.Cos(this.angle));
