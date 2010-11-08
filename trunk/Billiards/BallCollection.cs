@@ -68,15 +68,17 @@ namespace Billiards
 
 
             CueBall = new Sphere(game,
+                                "CueBall",
                                 20,
                                 ballRadius,
                                 game.Content.Load<Texture2D>(@"Images/Ballcue"),
                                 ref CueBallWorld,
                                 camera);
 
-            //CueBall.SetSpeedandAngle(1, 90);
+
 
             ball1 = new Sphere(game,
+                                  "1",
                                   20,
                                   ballRadius,
                                   game.Content.Load<Texture2D>(@"Images/Ball1"),
@@ -84,6 +86,7 @@ namespace Billiards
                                   camera);
 
             ball2 = new Sphere(game,
+                                "2",
                                 20,
                                 ballRadius,
                                 game.Content.Load<Texture2D>(@"Images/Ball2"),
@@ -91,27 +94,32 @@ namespace Billiards
                                 camera);
 
             ball3 = new Sphere(game,
-                               20,
+                                "3",
+                                20,
                                ballRadius,
                                game.Content.Load<Texture2D>(@"Images/Ball3"),
                                ref Ball3World,
                                camera);
 
             ball4 = new Sphere(game,
-                               20,
+                                "4",
+                                20,
                                ballRadius,
                                game.Content.Load<Texture2D>(@"Images/Ball4"),
                                ref Ball4World,
                                camera);
 
             ball5 = new Sphere(game,
-                               20,
+                                "5",
+                                20,
                                ballRadius,
                                game.Content.Load<Texture2D>(@"Images/Ball5"),
                                ref Ball5World,
                                camera);
 
             ball6 = new Sphere(game,
+                                 "6",
+
                                20,
                                ballRadius,
                                game.Content.Load<Texture2D>(@"Images/Ball6"),
@@ -119,6 +127,8 @@ namespace Billiards
                                camera);
 
             ball7 = new Sphere(game,
+                            "7",
+
                             20,
                             ballRadius,
                             game.Content.Load<Texture2D>(@"Images/Ball7"),
@@ -126,13 +136,15 @@ namespace Billiards
                             camera);
 
             ball8 = new Sphere(game,
-                              20,
+                                 "8",
+                                 20,
                               ballRadius,
                               game.Content.Load<Texture2D>(@"Images/Ball8"),
                               ref Ball8World,
                               camera);
 
             ball9 = new Sphere(game,
+                            "9",
                             20,
                             ballRadius,
                             game.Content.Load<Texture2D>(@"Images/Ball9"),
@@ -141,12 +153,15 @@ namespace Billiards
 
 
             ball10 = new Sphere(game,
-                            20,
+                             "10",
+                             20,
                             ballRadius,
                             game.Content.Load<Texture2D>(@"Images/Ball10"),
                             ref Ball10World,
                             camera);
+
             ball11 = new Sphere(game,
+                            "11",
                            20,
                            ballRadius,
                            game.Content.Load<Texture2D>(@"Images/Ball11"),
@@ -154,6 +169,7 @@ namespace Billiards
                            camera);
 
             ball12 = new Sphere(game,
+                            "12",
                             20,
                             ballRadius,
                             game.Content.Load<Texture2D>(@"Images/Ball12"),
@@ -161,6 +177,7 @@ namespace Billiards
                             camera);
 
             ball13 = new Sphere(game,
+                               "13",
                               20,
                               ballRadius,
                               game.Content.Load<Texture2D>(@"Images/Ball13"),
@@ -168,6 +185,7 @@ namespace Billiards
                               camera);
 
             ball14 = new Sphere(game,
+                            "14",
                             20,
                             ballRadius,
                             game.Content.Load<Texture2D>(@"Images/Ball14"),
@@ -176,6 +194,7 @@ namespace Billiards
 
 
             ball15 = new Sphere(game,
+                            "15",
                             20,
                             ballRadius,
                             game.Content.Load<Texture2D>(@"Images/Ball15"),
@@ -223,32 +242,39 @@ namespace Billiards
         {
 
 
-            shotTime += 1000 / 60;
+          
             if (MovingBalls.Count == 0)
-                shotTime = 0;
-            if (Keyboard.GetState().IsKeyDown(Keys.Q) && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                //CueBall.SetSpeedandAngle(5, (float)(-1 * MathHelper.PiOver2 +
-                    //Math.Asin((CueBall.camera.View.Translation.X - CueBall.World.Translation.X)
-                   // / Math.Sqrt(Math.Pow((CueBall.camera.View.Translation.X
-                   // - CueBall.World.Translation.X), 2) +
-                   // Math.Pow((CueBall.camera.View.Translation.Y
-                   // - CueBall.World.Translation.Y), 2)))));
+                shotTime = 0;
+            //if (Keyboard.GetState().IsKeyDown(Keys.Q) && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            //{
+           // }
+              
                 CueBall.SetSpeedandAngle(5, (float)MathHelper.PiOver2);
+                ball1.SetSpeedandAngle(5, (float)3 * MathHelper.PiOver2);
+                MovingBalls.Add(ball1);
                 MovingBalls.Add(CueBall);
+                StationaryBalls.Remove(ball1);
                 StationaryBalls.Remove(CueBall);
                 CheckForCollisions();
-            }
-            CueBall.World *= Matrix.CreateTranslation(CueBall.direction * CueBall.speed);
+           
 
-            if (Collisions.Count > 0 && shotTime >= Collisions[0].collisionTime)
+            }
+            shotTime += 1000 / 60;
+
+            if (Collisions.Count > 0)
             {
-                Collisions[0].collidee.SetSpeedandAngle(Collisions[0].collider.speed, MathHelper.PiOver2);
-                Collisions[0].collider.SetSpeedandAngle(0, 0);
-                MovingBalls.Remove(Collisions[0].collider);
-                MovingBalls.Add(Collisions[0].collidee);
-                Collisions.Remove(Collisions[0]);
-                CheckForCollisions();
+
+                if (shotTime >= Collisions[0].collisionTime)
+                {
+                    Collisions[0].collidee.SetSpeedandAngle(Collisions[0].collider.speed, MathHelper.PiOver2);
+                    //Collisions[0].collider.SetSpeedandAngle(0, 0);
+                    //MovingBalls.Remove(Collisions[0].collider);
+                    MovingBalls.Add(Collisions[0].collidee);
+
+                    Collisions = new List<Collision>();
+                   // CheckForCollisions();
+                }
             }
             base.Update(gameTime);
         }
@@ -262,83 +288,94 @@ namespace Billiards
         {
             foreach (Sphere mball in MovingBalls)
             {
-                float a = .0005f;
-                float d1y = mball.direction.Z;
-                float p1y = mball.World.Translation.Z;
-                float d1x = mball.direction.X;
-                float p1x = mball.World.Translation.X;
-                float u1 = mball.speed;
+
                 foreach (Sphere cball in MovingBalls)
                 {
-                    if (cball.Equals(mball))
-                        continue;
-                    float d2y = cball.direction.Z;
-                    float p2y = cball.World.Translation.Z;
-                    float d2x = cball.direction.X;
-                    float p2x = cball.World.Translation.X;
-                    float u2 = cball.speed;
-                    float cy = (.5f * (d1y - d2y));
-                    float cx = (.5f * (d1x - d2x));
-                    float by = u2 * d2x - u1 * d1x;
-                    float bx = u2 * d2y - u1 * d1y;
-                    float ay = p2y - p1y;
-                    float ax = p2x - p1x;
-                    float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
-                    float B = 2 * ((by * cy) + (bx * cx));
-                    float C = 2 * ((ay * cy) + (ax * cx));
-                    float D = 2 * ((ay * by) + (ax * bx));
-                    float E = (float)(2 * Math.Pow(ay, 2) + Math.Pow(ax, 2) - 4 * cball.Radius * cball.Radius);
-                    double[] sol = new double[4];
-                    double[] soli = new double[4];
-                    double[] dd = { A, B, C, D, E };
-                    int nSol = 0;
-                    int ctime = 0;
-                    QuarticClass.Quartic(dd, out sol, out soli, out nSol);
-                    if (nSol == 4)
+                    int time = CheckForCollisions(mball, cball);
+                    if (time > 0)
                     {
-                        ctime = (int)(1000 * Math.Min(Math.Min(sol[0], sol[1]), Math.Min(sol[2], sol[3])) + shotTime);
+                        System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", mball.name, cball.name, time));
+
+                        Collisions.Add(new Collision(game, time, mball, cball));
                     }
-                    else if (nSol == 2)
-                        ctime = (int)(1000 * Math.Min(sol[0], sol[1]) + shotTime);
-                    else
-                        continue;
-                    Collisions.Add(new Collision(game, ctime, mball, cball));
                     Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
                 }
+
                 foreach (Sphere cball in StationaryBalls)
                 {
-                    float d2y = cball.direction.Z;
-                    float p2y = cball.World.Translation.Z;
-                    float d2x = cball.direction.X;
-                    float p2x = cball.World.Translation.X;
-                    float u2 = cball.speed;
-                    float cy = (.5f * (d1y - d2y));
-                    float cx = (.5f * (d1x - d2x));
-                    float by = u2 * d2x - u1 * d1x;
-                    float bx = u2 * d2y - u1 * d1y;
-                    float ay = p2y - p1y;
-                    float ax = p2x - p1y;
-                    float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
-                    float B = 2 * ((by * cy) + (bx * cx));
-                    float C = 2 * ((ay * cy) + (ax * cx));
-                    float D = 2 * ((ay * by) + (ax * bx));
-                    float E = (float)(2 * Math.Pow(ay, 2) + Math.Pow(ax, 2) - 4 * cball.Radius * cball.Radius);
-                    double[] sol = new double[4];
-                    double[] soli = new double[4];
-                    double[] dd = { A, B, C, D, E };
-                    int nSol = 0;
-                    int ctime = 0;
-                    QuarticClass.Quartic(dd, out sol, out soli, out nSol);
-                    if (nSol == 4)
-                        ctime = (int)(1000 * Math.Min(Math.Min(sol[0], sol[1]), Math.Min(sol[2], sol[3])) + shotTime);
-                    else if (nSol == 2)
-                        ctime = (int)(1000 * Math.Min(sol[0], sol[1]) + shotTime);
-                    else
-                        continue;
-                    Collisions.Add(new Collision(game, ctime, mball, cball));
-                    Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
+                    //int time = -1;// CheckForCollisions(mball, cball);
+                    // if (time > 0)
+                    // {
+                    //     System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", mball.name, cball.name, time));
+                   
+                    //     Collisions.Add(new Collision(game, time, mball, cball));
+                    // }
+                    //Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
                 }
+                System.Console.WriteLine(string.Format("END LOOP"));
+                   
             }
+        }
+
+        private int CheckForCollisions(Sphere mball, Sphere cball)
+        {
+            if (cball.Equals(mball))
+                return -1;
+
+            System.Console.WriteLine(string.Format("checking {0} -- {1}", mball.name, cball.name));
+
+            float a = -0.000015f * 60;
+            float d1y = mball.direction.Z;
+            float p1y = mball.World.Translation.Z;
+            float d1x = mball.direction.X;
+            float p1x = mball.World.Translation.X;
+            float u1 = mball.speed;
+            float d2y = cball.direction.Z;
+           
+            float p2y = cball.World.Translation.Z;
+            float d2x = cball.direction.X;
+            float p2x = cball.World.Translation.X;
+            float u2 = cball.speed;
+            float cy = (.5f * a * (d1y - d2y));
+            float cx = (.5f * a * (d1x - d2x));
+            float by = u2 * d2x - u1 * d1x;
+            float bx = u2 * d2y - u1 * d1y;
+            float ay = p2y - p1y;
+            float ax = p2x - p1x;
+            float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
+            float B = 2 * ((by * cy) + (bx * cx));
+            float C = 2 * ((ay * cy) + (ax * cx));
+            float D = 2 * ((ay * by) + (ax * bx));
+            float E = (float)(2 * Math.Pow(ay, 2) + Math.Pow(ax, 2) - 4 * cball.Radius * cball.Radius);
+            double[] sol = new double[4];
+            double[] soli = new double[4];
+            double[] dd = { A, B, C, D, E };
+            int nSol = 0;
+            int ctime = 0;
+            QuarticClass.Quartic(dd, out sol, out soli, out nSol);
+            if (nSol == 4)
+            {
+                double min = 9999999;
+                foreach (double d in sol)
+                {
+                    if (d > 0 && d < min)
+                        min = d;
+                }
+                return ctime = (int)((1000 * min)  + shotTime);
+            }
+            else if (nSol == 2)
+            {
+                double min = 9999999;
+
+                for (int i = 0; i < 2; i++)
+                {
+                    if (sol[i] > 0 && sol[i] < min)
+                        min = sol[i];
+                }
+                return ctime = (int)((10000 * min) + shotTime);
+            }
+
+            return -1;
         }
     }
 }

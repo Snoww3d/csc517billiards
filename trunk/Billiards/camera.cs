@@ -13,7 +13,7 @@ namespace Billiards
         float phi = MathHelper.Pi;
 
         Game1 game;
-        float azimuthAngle = 0, altitudeAngle = 0, distance = 4;
+        
         public Matrix World { get; set; }
         public Matrix View { get; set; }
         public Matrix Projection { get; set; }
@@ -47,7 +47,6 @@ namespace Billiards
           
             if (ms.LeftButton == ButtonState.Pressed)
             {
-
                 theta += MathHelper.Clamp(0.1f + ((float)ms.X / Game.GraphicsDevice.Viewport.Width) * 0.2f, -.1f, .1f);
                 phi += MathHelper.Clamp(0.1f + ((float)ms.X / Game.GraphicsDevice.Viewport.Height) * 0.2f, -.1f,.1f);
             }
