@@ -23,7 +23,7 @@ namespace Billiards
         private float radius;
         private GraphicsDevice device;
         private VertexDeclaration vertexDeclaration;
-        public Billiards.Camera camera;
+        public Billiards.CameraComponent camera;
         public float speed;
         private float TranslatedSpeed;
         public Vector3 direction;
@@ -54,7 +54,7 @@ namespace Billiards
         #endregion
 
         #region Constructors
-        public Sphere(Billiards.Game1 game, string ballName, short tesselations, float radius, Texture2D texture, ref Matrix world, Billiards.Camera camera)
+        public Sphere(Billiards.Game1 game, string ballName, short tesselations, float radius, Texture2D texture, ref Matrix world, Billiards.CameraComponent camera)
             : base(game)
         {
             this.tesselations = tesselations;
@@ -76,8 +76,8 @@ namespace Billiards
         {
             device = ((Billiards.Game1)Game).GraphicsDevice;
             Effect = new BasicEffect(device, null);
-            Effect.Projection = camera.Projection;
-            Effect.View = camera.View;
+            Effect.Projection = camera.ProjectionMatrix;
+            Effect.View = camera.ViewMatrix;
 
             Effect.TextureEnabled = true;
             Effect.Texture = Texture;
@@ -156,8 +156,8 @@ namespace Billiards
         {
             if (base.Visible)
             {
-                Effect.Projection = camera.Projection;
-                Effect.View = camera.View;
+                Effect.Projection = camera.ProjectionMatrix;
+                Effect.View = camera.ViewMatrix;
                 Effect.World = World;
                 Effect.Begin();
                 foreach (EffectPass pass in Effect.CurrentTechnique.Passes)

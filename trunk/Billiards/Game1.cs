@@ -18,9 +18,29 @@ namespace Billiards
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        public Camera camera;
+        private const float FLOOR_WIDTH = 8.0f;
+        private const float FLOOR_HEIGHT = 8.0f;
+        private const float FLOOR_TILE_U = 8.0f;
+        private const float FLOOR_TILE_V = 8.0f;
+        private const float CAMERA_FOV = 90.0f;
+        private const float CAMERA_ZNEAR = 0.01f;
+        private const float CAMERA_ZFAR = 100.0f;
+        private const float CAMERA_OFFSET = 0.5f;
+        private const float CAMERA_BOUNDS_MIN_X = -FLOOR_WIDTH / 2.0f;
+        private const float CAMERA_BOUNDS_MAX_X = FLOOR_WIDTH / 2.0f;
+        private const float CAMERA_BOUNDS_MIN_Y = CAMERA_OFFSET;
+        private const float CAMERA_BOUNDS_MAX_Y = 4.0f;
+        private const float CAMERA_BOUNDS_MIN_Z = -FLOOR_HEIGHT / 2.0f;
+        private const float CAMERA_BOUNDS_MAX_Z = FLOOR_HEIGHT / 2.0f;
+        private int windowWidth;
+        private int windowHeight;
+
+        private CameraComponent camera;
+        public Camera_Old camera_old;
         public BallCollection ballCollection;
         public GraphicsDeviceManager graphics;
+
+       
 
         protected Model table;
 
@@ -41,13 +61,28 @@ namespace Billiards
         /// </summary>
         protected override void Initialize()
         {
-            camera = new Camera(this);
+            // Setup the window to be a quarter the size of the desktop.
+            windowWidth = GraphicsDevice.DisplayMode.Width;
+            windowHeight = GraphicsDevice.DisplayMode.Height;
+
+            camera = new CameraComponent(this);
+            Components.Add(camera);
+
+            GraphicsDevice device = graphics.GraphicsDevice;
+            float aspectRatio = (float)windowWidth / (float)windowHeight;
+
+            camera.Perspective(CAMERA_FOV, aspectRatio, CAMERA_ZNEAR, CAMERA_ZFAR);
+            camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);           
+            camera.OrbitMinZoom = 1.5f;
+            camera.OrbitMaxZoom = 5.0f;
+            camera.OrbitOffsetDistance = camera.OrbitMinZoom;
+            camera.CurrentBehavior = Camera.Behavior.Orbit;
+            camera.Rotate(0.0f, -30.0f, 0.0f);
+            camera.LookAt(new Vector3(0,0,0));
 
             ballCollection = new BallCollection(this, camera);
-
             Components.Add(ballCollection);
 
-            Components.Add(camera);
 
 
             FrameRateDisplay frameRateDisplay = new FrameRateDisplay(this);
@@ -84,7 +119,7 @@ namespace Billiards
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
 
@@ -111,8 +146,8 @@ namespace Billiards
                 {
                     effect.EnableDefaultLighting();
                     effect.World = TableWorld;
-                    effect.View = camera.View;
-                    effect.Projection = camera.Projection;
+                    effect.View = camera.ViewMatrix;
+                    effect.Projection = camera.ProjectionMatrix;
                 }
                 mesh.Draw();
             }
