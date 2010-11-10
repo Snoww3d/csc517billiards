@@ -36,7 +36,7 @@ namespace Billiards
     /// </summary>
     public interface ICamera
     {
-    #region Public Methods
+        #region Public Methods
 
         /// <summary>
         /// Builds a look at style viewing matrix using the camera's current
@@ -44,7 +44,7 @@ namespace Billiards
         /// </summary>
         /// <param name="target">The target position to look at.</param>
         void LookAt(Vector3 target);
-        
+
         /// <summary>
         /// Builds a look at style viewing matrix.
         /// </summary>
@@ -79,7 +79,7 @@ namespace Billiards
         /// <param name="znear">The distance to the near clip plane.</param>
         /// <param name="zfar">The distance to the far clip plane.</param>
         void Perspective(float fovx, float aspect, float znear, float zfar);
-        
+
         /// <summary>
         /// Rotates the camera. Positive angles specify counter clockwise
         /// rotations when looking down the axis of rotation towards the
@@ -117,9 +117,9 @@ namespace Billiards
         /// </param>
         void Zoom(float zoom, float minZoom, float maxZoom);
 
-    #endregion
+        #endregion
 
-    #region Properties
+        #region Properties
 
         /// <summary>
         /// Property to get and set the camera's orientation.
@@ -138,7 +138,7 @@ namespace Billiards
             get;
             set;
         }
-        
+
         /// <summary>
         /// Property to get the camera's perspective projection matrix.
         /// </summary>
@@ -195,7 +195,7 @@ namespace Billiards
             get;
         }
 
-    #endregion
+        #endregion
     }
 
     /// <summary>
@@ -223,10 +223,10 @@ namespace Billiards
         public const float DEFAULT_FOVX = 90.0f;
         public const float DEFAULT_ZNEAR = 0.1f;
         public const float DEFAULT_ZFAR = 1000.0f;
-        
+
         public const float DEFAULT_ORBIT_MIN_ZOOM = DEFAULT_ZNEAR + 1.0f;
         public const float DEFAULT_ORBIT_MAX_ZOOM = DEFAULT_ZFAR * 0.5f;
-        
+
         public const float DEFAULT_ORBIT_OFFSET_LENGTH = DEFAULT_ORBIT_MIN_ZOOM +
             (DEFAULT_ORBIT_MAX_ZOOM - DEFAULT_ORBIT_MIN_ZOOM) * 0.25f;
 
@@ -246,7 +246,7 @@ namespace Billiards
         private float orbitMaxZoom;
         private float orbitOffsetLength;
         private float firstPersonYOffset;
-        
+
         private Vector3 eye;
         private Vector3 target;
         private Vector3 targetYAxis;
@@ -263,7 +263,7 @@ namespace Billiards
         private Vector3 savedEye;
         private float savedAccumPitchDegrees;
 
-    #region Public Methods
+        #region Public Methods
 
         /// <summary>
         /// Constructs a new instance of the camera class. The camera will
@@ -475,26 +475,28 @@ namespace Billiards
         public void Rotate(float headingDegrees, float pitchDegrees, float rollDegrees)
         {
             headingDegrees = -headingDegrees;
+
+
             pitchDegrees = -pitchDegrees;
             rollDegrees = -rollDegrees;
 
             switch (behavior)
             {
-            case Behavior.FirstPerson:
-            case Behavior.Spectator:
-                RotateFirstPerson(headingDegrees, pitchDegrees);
-                break;
+                case Behavior.FirstPerson:
+                case Behavior.Spectator:
+                    RotateFirstPerson(headingDegrees, pitchDegrees);
+                    break;
 
-            case Behavior.Flight:
-                RotateFlight(headingDegrees, pitchDegrees, rollDegrees);
-                break;
+                case Behavior.Flight:
+                    RotateFlight(headingDegrees, pitchDegrees, rollDegrees);
+                    break;
 
-            case Behavior.Orbit:
-                RotateOrbit(headingDegrees, pitchDegrees, rollDegrees);
-                break;
+                case Behavior.Orbit:
+                    RotateOrbit(headingDegrees, pitchDegrees, rollDegrees);
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
 
             UpdateViewMatrix();
@@ -559,9 +561,9 @@ namespace Billiards
             }
         }
 
-    #endregion
+        #endregion
 
-    #region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Change to a new camera behavior.
@@ -578,84 +580,84 @@ namespace Billiards
 
             switch (newBehavior)
             {
-            case Behavior.FirstPerson:
-                switch (prevBehavior)
-                {
-                case Behavior.Flight:
+                case Behavior.FirstPerson:
+                    switch (prevBehavior)
+                    {
+                        case Behavior.Flight:
+                        case Behavior.Spectator:
+                            eye.Y = firstPersonYOffset;
+                            UpdateViewMatrix();
+                            break;
+
+                        case Behavior.Orbit:
+                            eye.X = savedEye.X;
+                            eye.Z = savedEye.Z;
+                            eye.Y = firstPersonYOffset;
+                            orientation = savedOrientation;
+                            accumPitchDegrees = savedAccumPitchDegrees;
+                            UpdateViewMatrix();
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    UndoRoll();
+                    break;
+
                 case Behavior.Spectator:
-                    eye.Y = firstPersonYOffset;
-                    UpdateViewMatrix();
+                    switch (prevBehavior)
+                    {
+                        case Behavior.Flight:
+                            UpdateViewMatrix();
+                            break;
+
+                        case Behavior.Orbit:
+                            eye = savedEye;
+                            orientation = savedOrientation;
+                            accumPitchDegrees = savedAccumPitchDegrees;
+                            UpdateViewMatrix();
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    UndoRoll();
                     break;
 
-                case Behavior.Orbit:
-                    eye.X = savedEye.X;
-                    eye.Z = savedEye.Z;
-                    eye.Y = firstPersonYOffset;
-                    orientation = savedOrientation;
-                    accumPitchDegrees = savedAccumPitchDegrees;
-                    UpdateViewMatrix();
-                    break;
-
-                default:
-                    break;
-                }
-
-                UndoRoll();
-                break;
-
-            case Behavior.Spectator:
-                switch (prevBehavior)
-                {
                 case Behavior.Flight:
-                    UpdateViewMatrix();
+                    if (prevBehavior == Behavior.Orbit)
+                    {
+                        eye = savedEye;
+                        orientation = savedOrientation;
+                        accumPitchDegrees = savedAccumPitchDegrees;
+                        UpdateViewMatrix();
+                    }
+                    else
+                    {
+                        savedEye = eye;
+                        UpdateViewMatrix();
+                    }
                     break;
 
                 case Behavior.Orbit:
-                    eye = savedEye;
-                    orientation = savedOrientation;
-                    accumPitchDegrees = savedAccumPitchDegrees;
-                    UpdateViewMatrix();
+                    if (prevBehavior == Behavior.FirstPerson)
+                        firstPersonYOffset = eye.Y;
+
+                    savedEye = eye;
+                    savedOrientation = orientation;
+                    savedAccumPitchDegrees = accumPitchDegrees;
+
+                    targetYAxis = yAxis;
+
+                    Vector3 newEye = eye + zAxis * orbitOffsetLength;
+
+                    LookAt(newEye, eye, targetYAxis);
                     break;
 
                 default:
                     break;
-                }
-
-                UndoRoll();
-                break;
-
-            case Behavior.Flight:
-                if (prevBehavior == Behavior.Orbit)
-                {
-                    eye = savedEye;
-                    orientation = savedOrientation;
-                    accumPitchDegrees = savedAccumPitchDegrees;
-                    UpdateViewMatrix();
-                }
-                else
-                {
-                    savedEye = eye;
-                    UpdateViewMatrix();
-                }
-                break;
-
-            case Behavior.Orbit:
-                if (prevBehavior == Behavior.FirstPerson)
-                    firstPersonYOffset = eye.Y;
-
-                savedEye = eye;
-                savedOrientation = orientation;
-                savedAccumPitchDegrees = accumPitchDegrees;
-
-                targetYAxis = yAxis;
-
-                Vector3 newEye = eye + zAxis * orbitOffsetLength;
-
-                LookAt(newEye, eye, targetYAxis);
-                break;
-
-            default:
-                break;
             }
         }
 
@@ -666,7 +668,7 @@ namespace Billiards
         private void ChangeOrientation(Quaternion newOrientation)
         {
             Matrix m = Matrix.CreateFromQuaternion(newOrientation);
-            
+
             // Store the pitch for this new orientation.
             // First person and spectator behaviors limit pitching to
             // 90 degrees straight up and down.
@@ -743,6 +745,9 @@ namespace Billiards
             if (accumPitchDegrees < -360.0f)
                 accumPitchDegrees += 360.0f;
 
+
+
+
             float heading = MathHelper.ToRadians(headingDegrees);
             float pitch = MathHelper.ToRadians(pitchDegrees);
             float roll = MathHelper.ToRadians(rollDegrees);
@@ -763,7 +768,7 @@ namespace Billiards
         {
             float heading = MathHelper.ToRadians(headingDegrees);
             float pitch = MathHelper.ToRadians(pitchDegrees);
-            
+
             if (preferTargetYAxisOrbiting)
             {
                 Quaternion rotation = Quaternion.Identity;
@@ -785,6 +790,7 @@ namespace Billiards
                 float roll = MathHelper.ToRadians(rollDegrees);
                 Quaternion rotation = Quaternion.CreateFromYawPitchRoll(heading, pitch, roll);
                 Quaternion.Concatenate(ref orientation, ref rotation, out orientation);
+
             }
         }
 
@@ -826,9 +832,9 @@ namespace Billiards
             viewDir.Z = -zAxis.Z;
         }
 
-    #endregion
-        
-    #region Properties
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Property to get and set the camera's behavior.
@@ -906,9 +912,9 @@ namespace Billiards
         public bool PreferTargetYAxisOrbiting
         {
             get { return preferTargetYAxisOrbiting; }
-            
+
             set
-            { 
+            {
                 preferTargetYAxisOrbiting = value;
 
                 if (preferTargetYAxisOrbiting)
@@ -972,7 +978,7 @@ namespace Billiards
             get { return zAxis; }
         }
 
-    #endregion
+        #endregion
     }
 
     /// <summary>
@@ -1013,7 +1019,7 @@ namespace Billiards
             PitchUpAlternate,
             PitchDownPrimary,
             PitchDownAlternate,
-            
+
             YawLeftPrimary,
             YawLeftAlternate,
             YawRightPrimary,
@@ -1023,7 +1029,7 @@ namespace Billiards
             RollLeftAlternate,
             RollRightPrimary,
             RollRightAlternate,
-            
+
             StrafeRightPrimary,
             StrafeRightAlternate,
             StrafeLeftPrimary,
@@ -1041,9 +1047,9 @@ namespace Billiards
         private const float DEFAULT_VELOCITY_X = 1.0f;
         private const float DEFAULT_VELOCITY_Y = 1.0f;
         private const float DEFAULT_VELOCITY_Z = 1.0f;
-                
+
         private const int MOUSE_SMOOTHING_CACHE_SIZE = 10;
-        
+
         private Camera camera;
         private bool movingAlongPosX;
         private bool movingAlongNegX;
@@ -1069,8 +1075,8 @@ namespace Billiards
         private MouseState previousMouseState;
         private KeyboardState currentKeyboardState;
         private Dictionary<Actions, Keys> actionKeys;
-        
-    #region Public Methods
+
+        #region Public Methods
 
         /// <summary>
         /// Constructs a new instance of the CameraComponent class. The
@@ -1079,7 +1085,8 @@ namespace Billiards
         /// z axis. An initial perspective projection matrix is created
         /// as well as setting up initial key bindings to the actions.
         /// </summary>
-        public CameraComponent(Game game) : base(game)
+        public CameraComponent(Game game)
+            : base(game)
         {
             camera = new Camera();
             camera.CurrentBehavior = Camera.Behavior.Spectator;
@@ -1090,7 +1097,7 @@ namespace Billiards
             movingAlongNegY = false;
             movingAlongPosZ = false;
             movingAlongNegZ = false;
-            
+
             savedMousePosX = -1;
             savedMousePosY = -1;
 
@@ -1232,6 +1239,7 @@ namespace Billiards
         /// <param name="rollDegrees">Z axis rotation in degrees.</param>
         public void Rotate(float headingDegrees, float pitchDegrees, float rollDegrees)
         {
+
             camera.Rotate(headingDegrees, pitchDegrees, rollDegrees);
         }
 
@@ -1286,9 +1294,9 @@ namespace Billiards
             camera.Zoom(zoom, minZoom, maxZoom);
         }
 
-    #endregion
+        #endregion
 
-    #region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Determines which way to move the camera based on player input.
@@ -1367,112 +1375,112 @@ namespace Billiards
 
             switch (CurrentBehavior)
             {
-            case Camera.Behavior.FirstPerson:
-            case Camera.Behavior.Spectator:
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeRightPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeRightAlternate]))
-                {
-                    if (!movingAlongPosX)
+                case Camera.Behavior.FirstPerson:
+                case Camera.Behavior.Spectator:
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeRightPrimary]) ||
+                        currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeRightAlternate]))
                     {
-                        movingAlongPosX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongPosX)
+                        {
+                            movingAlongPosX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X += 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongPosX = false;
                     }
 
-                    direction.X += 1.0f;
-                }
-                else
-                {
-                    movingAlongPosX = false;
-                }
-
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeLeftPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeLeftAlternate]))
-                {
-                    if (!movingAlongNegX)
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeLeftPrimary]) ||
+                        currentKeyboardState.IsKeyDown(actionKeys[Actions.StrafeLeftAlternate]))
                     {
-                        movingAlongNegX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongNegX)
+                        {
+                            movingAlongNegX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X -= 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongNegX = false;
                     }
 
-                    direction.X -= 1.0f;
-                }
-                else
-                {
-                    movingAlongNegX = false;
-                }
+                    break;
 
-                break;
-
-            case Camera.Behavior.Flight:
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawLeftPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawLeftAlternate]))
-                {
-                    if (!movingAlongPosX)
+                case Camera.Behavior.Flight:
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawLeftPrimary]) ||
+                        currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawLeftAlternate]))
                     {
-                        movingAlongPosX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongPosX)
+                        {
+                            movingAlongPosX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X += 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongPosX = false;
                     }
 
-                    direction.X += 1.0f;
-                }
-                else
-                {
-                    movingAlongPosX = false;
-                }
-
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawRightPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawRightAlternate]))
-                {
-                    if (!movingAlongNegX)
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawRightPrimary]) ||
+                        currentKeyboardState.IsKeyDown(actionKeys[Actions.FlightYawRightAlternate]))
                     {
-                        movingAlongNegX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongNegX)
+                        {
+                            movingAlongNegX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X -= 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongNegX = false;
+                    }
+                    break;
+
+                case Camera.Behavior.Orbit:
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollLeftPrimary]) ||
+                        currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollLeftAlternate]))
+                    {
+                        if (!movingAlongPosX)
+                        {
+                            movingAlongPosX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X += 1.0f;
+                    }
+                    else
+                    {
+                        movingAlongPosX = false;
                     }
 
-                    direction.X -= 1.0f;
-                }
-                else
-                {
-                    movingAlongNegX = false;
-                }
-                break;
-
-            case Camera.Behavior.Orbit:
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollLeftPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollLeftAlternate]))
-                {
-                    if (!movingAlongPosX)
+                    if (currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollRightPrimary]) ||
+                        currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollRightAlternate]))
                     {
-                        movingAlongPosX = true;
-                        currentVelocity.X = 0.0f;
+                        if (!movingAlongNegX)
+                        {
+                            movingAlongNegX = true;
+                            currentVelocity.X = 0.0f;
+                        }
+
+                        direction.X -= 1.0f;
                     }
-
-                    direction.X += 1.0f;
-                }
-                else
-                {
-                    movingAlongPosX = false;
-                }
-
-                if (currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollRightPrimary]) ||
-                    currentKeyboardState.IsKeyDown(actionKeys[Actions.OrbitRollRightAlternate]))
-                {
-                    if (!movingAlongNegX)
+                    else
                     {
-                        movingAlongNegX = true;
-                        currentVelocity.X = 0.0f;
+                        movingAlongNegX = false;
                     }
+                    break;
 
-                    direction.X -= 1.0f;
-                }
-                else
-                {
-                    movingAlongNegX = false;
-                }
-                break;
-
-            default:
-                break;
+                default:
+                    break;
             }
         }
 
@@ -1546,7 +1554,7 @@ namespace Billiards
             // Store the current mouse movement entry at the front of cache.
             mouseSmoothingCache[0].X = x;
             mouseSmoothingCache[0].Y = y;
-            
+
             float averageX = 0.0f;
             float averageY = 0.0f;
             float averageTotal = 0.0f;
@@ -1562,7 +1570,7 @@ namespace Billiards
                 averageTotal += 1.0f * currentWeight;
                 currentWeight *= mouseSmoothingSensitivity;
             }
-            
+
             // Calculate the new smoothed mouse movement.
             smoothedMouseMovement.X = averageX / averageTotal;
             smoothedMouseMovement.Y = averageY / averageTotal;
@@ -1791,53 +1799,53 @@ namespace Billiards
 
             switch (camera.CurrentBehavior)
             {
-            case Camera.Behavior.FirstPerson:
-            case Camera.Behavior.Spectator:
-                dx = smoothedMouseMovement.X;
-                dy = smoothedMouseMovement.Y;
-                
-                RotateSmoothly(dx, dy, 0.0f);
-                UpdatePosition(ref direction, elapsedTimeSec);
-                break;
+                case Camera.Behavior.FirstPerson:
+                case Camera.Behavior.Spectator:
+                    dx = smoothedMouseMovement.X;
+                    dy = smoothedMouseMovement.Y;
 
-            case Camera.Behavior.Flight:
-                dy = -smoothedMouseMovement.Y;
-                dz = smoothedMouseMovement.X;
-                
-                RotateSmoothly(0.0f, dy, dz);
+                    RotateSmoothly(dx, dy, 0.0f);
+                    UpdatePosition(ref direction, elapsedTimeSec);
+                    break;
 
-                if ((dx = direction.X * flightYawSpeed * elapsedTimeSec) != 0.0f)
-                    camera.Rotate(dx, 0.0f, 0.0f);
+                case Camera.Behavior.Flight:
+                    dy = -smoothedMouseMovement.Y;
+                    dz = smoothedMouseMovement.X;
 
-                direction.X = 0.0f; // ignore yaw motion when updating camera's velocity
-                UpdatePosition(ref direction, elapsedTimeSec);
-                break;
+                    RotateSmoothly(0.0f, dy, dz);
 
-            case Camera.Behavior.Orbit:
-                dx = -smoothedMouseMovement.X;
-                dy = -smoothedMouseMovement.Y;
+                    if ((dx = direction.X * flightYawSpeed * elapsedTimeSec) != 0.0f)
+                        camera.Rotate(dx, 0.0f, 0.0f);
 
-                RotateSmoothly(dx, dy, 0.0f);
+                    direction.X = 0.0f; // ignore yaw motion when updating camera's velocity
+                    UpdatePosition(ref direction, elapsedTimeSec);
+                    break;
 
-                if (!camera.PreferTargetYAxisOrbiting)
-                {
-                    if ((dz = direction.X * orbitRollSpeed * elapsedTimeSec) != 0.0f)
-                        camera.Rotate(0.0f, 0.0f, dz);
-                }
+                case Camera.Behavior.Orbit:
+                    dx = -smoothedMouseMovement.X;
+                    dy = -smoothedMouseMovement.Y;
 
-                if ((dz = GetMouseWheelDirection() * mouseWheelSpeed) != 0.0f)
-                    camera.Zoom(dz, camera.OrbitMinZoom, camera.OrbitMaxZoom);
-                    
-                break;
+                    RotateSmoothly(dx, dy, 0.0f);
 
-            default:
-                break;
+                    if (!camera.PreferTargetYAxisOrbiting)
+                    {
+                        if ((dz = direction.X * orbitRollSpeed * elapsedTimeSec) != 0.0f)
+                            camera.Rotate(0.0f, 0.0f, dz);
+                    }
+
+                    if ((dz = GetMouseWheelDirection() * mouseWheelSpeed) != 0.0f)
+                        camera.Zoom(dz, camera.OrbitMinZoom, camera.OrbitMaxZoom);
+
+                    break;
+
+                default:
+                    break;
             }
         }
 
-    #endregion
+        #endregion
 
-    #region Properties
+        #region Properties
 
         /// <summary>
         /// Property to get and set the camera's acceleration.
@@ -1920,7 +1928,7 @@ namespace Billiards
             get { return camera.OrbitOffsetDistance; }
             set { camera.OrbitOffsetDistance = value; }
         }
-        
+
         /// <summary>
         /// Property to get and set the orbit behavior's rolling speed.
         /// This only applies when PreferTargetYAxisOrbiting is set to false.
@@ -2045,6 +2053,6 @@ namespace Billiards
             get { return camera.ZAxis; }
         }
 
-    #endregion
+        #endregion
     }
 }
