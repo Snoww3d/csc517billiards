@@ -20,8 +20,6 @@ namespace Billiards
     {
         private const float FLOOR_WIDTH = 8.0f;
         private const float FLOOR_HEIGHT = 8.0f;
-        private const float FLOOR_TILE_U = 8.0f;
-        private const float FLOOR_TILE_V = 8.0f;
         private const float CAMERA_FOV = 90.0f;
         private const float CAMERA_ZNEAR = 0.01f;
         private const float CAMERA_ZFAR = 100.0f;
@@ -39,8 +37,9 @@ namespace Billiards
         public Camera_Old camera_old;
         public BallCollection ballCollection;
         public GraphicsDeviceManager graphics;
+        public Vector3 CameraTarget = new Vector3(0, 0, 0);
 
-       
+
 
         protected Model table;
 
@@ -72,13 +71,13 @@ namespace Billiards
             float aspectRatio = (float)windowWidth / (float)windowHeight;
 
             camera.Perspective(CAMERA_FOV, aspectRatio, CAMERA_ZNEAR, CAMERA_ZFAR);
-            camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);           
+            camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);
             camera.OrbitMinZoom = 1.5f;
             camera.OrbitMaxZoom = 5.0f;
             camera.OrbitOffsetDistance = camera.OrbitMinZoom;
             camera.CurrentBehavior = Camera.Behavior.Orbit;
             camera.Rotate(0.0f, -30.0f, 0.0f);
-            camera.LookAt(new Vector3(0,0,0));
+            camera.LookAt(CameraTarget);
 
             ballCollection = new BallCollection(this, camera);
             Components.Add(ballCollection);
@@ -122,6 +121,24 @@ namespace Billiards
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Q))
+            {
+                CameraTarget = ballCollection.CueBall.World.Translation;
+                camera.OrbitMinZoom = .2f;
+            }
+            else
+            {
+                CameraTarget = Vector3.Zero;
+                camera.OrbitMinZoom = 1f;
+            }
+
+
+            if (camera.Position.Y == 0f)
+            {
+                camera.PreferTargetYAxisOrbiting = true; 
+            }
+            camera.LookAt(camera.Position, CameraTarget, Vector3.Up);
 
 
             base.Update(gameTime);
