@@ -44,7 +44,7 @@ namespace Billiards
         public Sphere ball14;
         public Sphere ball15;
 
-        public BallCollection(Billiards.Game1 game, Camera camera)
+        public BallCollection(Billiards.Game1 game, CameraComponent camera)
             : base(game)
         {
             this.game = game;
