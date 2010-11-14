@@ -273,21 +273,21 @@ namespace Billiards
                 //CheckForCollisions();
             shotTime += 1000 / 60;
 
-            if (Collisions.Count > 0)
-            {
+            //if (Collisions.Count > 0)
+            //{
 
-                if (shotTime >= Collisions[0].collisionTime)
-                {
-                    Collisions[0].collidee.SetSpeedandAngle(Collisions[0].collider.speed, MathHelper.PiOver2);
-                    Collisions[0].collider.SetSpeedandAngle(0, 0);
-                    MovingBalls.Remove(Collisions[0].collider);
-                    StationaryBalls.Add(Collisions[0].collider);
-                    MovingBalls.Add(Collisions[0].collidee);
+            //    if (shotTime >= Collisions[0].collisionTime)
+            //    {
+            //        Collisions[0].collidee.SetSpeedandAngle(Collisions[0].collider.speed, MathHelper.PiOver2);
+            //        Collisions[0].collider.SetSpeedandAngle(0, 0);
+            //        MovingBalls.Remove(Collisions[0].collider);
+            //        StationaryBalls.Add(Collisions[0].collider);
+            //        MovingBalls.Add(Collisions[0].collidee);
 
-                    Collisions = new List<Collision>();
-                    CheckForCollisions();
-                }
-            }
+            //        Collisions = new List<Collision>();
+            //        CheckForCollisions();
+            //    }
+            //}
 
             for (int i = 0; i < MovingBalls.Count;i++)
             {
@@ -314,47 +314,51 @@ namespace Billiards
             int time = 0;
             while (time < timebetweenframes)
             {
-                foreach (Sphere mball in MovingBalls)
+                for (int i = 0; i < MovingBalls.Count;i++)
                 {
-                    mball.World *= Matrix.CreateTranslation(mball.speed * mball.direction / 10);
-                    foreach (Sphere cball in MovingBalls)
+                    MovingBalls[i].World *= Matrix.CreateTranslation(MovingBalls[i].speed * MovingBalls[i].direction / 100);
+                    translation += MovingBalls[i].speed * MovingBalls[i].direction / 100;
+                    for (int j = 0; j < MovingBalls.Count; j++)
                     {
-                        if(CheckForCollisions(mball, cball))
+                        if (CheckForCollisions(MovingBalls[i], MovingBalls[j]))
                         {
-                            mball.SetSpeedandAngle(0,0);
-                            cball.SetSpeedandAngle(0,0);
+                            SetSpeedandAngle( MovingBalls[j],MovingBalls[i].speed, (float)MovingBalls[i].angle);
+                            MovingBalls[i].SetSpeedandAngle(0, 0);
+                            
                         }
-                        //int time = CheckForCollisions(mball, cball);
+                        //int time = CheckForCollisions(MovingBalls[i], cball);
                         //if (time > 0)
                         //{
-                        //    System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", mball.name, cball.name, time));
+                        //    System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", MovingBalls[i].name, cball.name, time));
 
-                        //    Collisions.Add(new Collision(game, time, mball, cball));
+                        //    Collisions.Add(new Collision(game, time, MovingBalls[i], cball));
                         //}
                         //Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
                      }
 
-                    foreach (Sphere cball in StationaryBalls)
+                    for (int j = 0; j < StationaryBalls.Count; j++)
                     {
-                        if (CheckForCollisions(mball, cball))
+                        if (CheckForCollisions(MovingBalls[i], StationaryBalls[j]))
                         {
-                            mball.SetSpeedandAngle(0, 0);
-                            cball.SetSpeedandAngle(0, 0);
+                            SetSpeedandAngle(StationaryBalls[j],MovingBalls[i].speed, (float)MovingBalls[i].angle);
+                            MovingBalls[i].SetSpeedandAngle(0, 0);
                         }
                         //    int time = -1;
-                        //    time = CheckForCollisions(mball, cball);
+                        //    time = CheckForCollisions(MovingBalls[i], cball);
                         //    if (time > 0)
                         //    {
-                        //        System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", mball.name, cball.name, time));
+                        //        System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", MovingBalls[i].name, cball.name, time));
 
-                        //        Collisions.Add(new Collision(game, time, mball, cball));
+                        //        Collisions.Add(new Collision(game, time, MovingBalls[i], cball));
                         //    }
                         //    Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
                         //}
                         //System.Console.WriteLine(string.Format("END LOOP"));
                     }
+                    MovingBalls[i].World *= Matrix.CreateTranslation(-translation); 
                 }
-                time += 100;
+                time += 10;
+                
             }
         }
 
@@ -368,17 +372,17 @@ namespace Billiards
             if (distance < mball.Radius)
                 return true;
             return false;
-            //if (cball.Equals(mball))
+            //if (cball.Equals(MovingBalls[i]))
             //    return -1;
 
             
 
             //float a = -0.000015f * 60;
-            //float d1y = mball.direction.Z;
-            //float p1y = mball.World.Translation.Z;
-            //float d1x = mball.direction.X;
-            //float p1x = mball.World.Translation.X;
-            //float u1 = mball.speed;
+            //float d1y = MovingBalls[i].direction.Z;
+            //float p1y = MovingBalls[i].World.Translation.Z;
+            //float d1x = MovingBalls[i].direction.X;
+            //float p1x = MovingBalls[i].World.Translation.X;
+            //float u1 = MovingBalls[i].speed;
             //float d2y = cball.direction.Z;
 
             //float p2y = cball.World.Translation.Z;
