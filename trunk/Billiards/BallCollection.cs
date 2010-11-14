@@ -250,9 +250,10 @@ namespace Billiards
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            if (MovingBalls.Count == 0)
+            if (MovingBalls.Count != 0)
             {
-                shotTime = 0;
+                CheckForCollisions();
+                //shotTime = 0;
                 //if (Keyboard.GetState().IsKeyDown(Keys.Q) && Mouse.GetState().LeftButton == ButtonState.Pressed)
                 //{
                 // }
@@ -261,13 +262,15 @@ namespace Billiards
 
                 // ball1.SetSpeedandAngle(5, (float)3 * MathHelper.PiOver2);
                 //MovingBalls.Add(ball1);
-                MovingBalls.Add(CueBall);
+                //MovingBalls.Add(CueBall);
                 // StationaryBalls.Remove(ball1);
-                StationaryBalls.Remove(CueBall);
+                //StationaryBalls.Remove(CueBall);
                 // CheckForCollisions();
 
 
             }
+            //if (shotTime == 0)
+                //CheckForCollisions();
             shotTime += 1000 / 60;
 
             if (Collisions.Count > 0)
@@ -276,12 +279,13 @@ namespace Billiards
                 if (shotTime >= Collisions[0].collisionTime)
                 {
                     Collisions[0].collidee.SetSpeedandAngle(Collisions[0].collider.speed, MathHelper.PiOver2);
-                    //Collisions[0].collider.SetSpeedandAngle(0, 0);
-                    //MovingBalls.Remove(Collisions[0].collider);
+                    Collisions[0].collider.SetSpeedandAngle(0, 0);
+                    MovingBalls.Remove(Collisions[0].collider);
+                    StationaryBalls.Add(Collisions[0].collider);
                     MovingBalls.Add(Collisions[0].collidee);
 
                     Collisions = new List<Collision>();
-                    // CheckForCollisions();
+                    CheckForCollisions();
                 }
             }
 
@@ -305,96 +309,122 @@ namespace Billiards
 
         public void CheckForCollisions()
         {
-            foreach (Sphere mball in MovingBalls)
+            Vector3 translation = Vector3.Zero;
+            int timebetweenframes = 1000/60;
+            int time = 0;
+            while (time < timebetweenframes)
             {
-
-                foreach (Sphere cball in MovingBalls)
+                foreach (Sphere mball in MovingBalls)
                 {
-                    int time = CheckForCollisions(mball, cball);
-                    if (time > 0)
+                    mball.World *= Matrix.CreateTranslation(mball.speed * mball.direction / 10);
+                    foreach (Sphere cball in MovingBalls)
                     {
-                        System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", mball.name, cball.name, time));
+                        if(CheckForCollisions(mball, cball))
+                        {
+                            mball.SetSpeedandAngle(0,0);
+                            cball.SetSpeedandAngle(0,0);
+                        }
+                        //int time = CheckForCollisions(mball, cball);
+                        //if (time > 0)
+                        //{
+                        //    System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", mball.name, cball.name, time));
 
-                        Collisions.Add(new Collision(game, time, mball, cball));
+                        //    Collisions.Add(new Collision(game, time, mball, cball));
+                        //}
+                        //Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
                     }
-                    Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
+
+                    foreach (Sphere cball in StationaryBalls)
+                    {
+                        if (CheckForCollisions(mball, cball))
+                        {
+                            mball.SetSpeedandAngle(0, 0);
+                            cball.SetSpeedandAngle(0, 0);
+                        }
+                        //    int time = -1;
+                        //    time = CheckForCollisions(mball, cball);
+                        //    if (time > 0)
+                        //    {
+                        //        System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", mball.name, cball.name, time));
+
+                        //        Collisions.Add(new Collision(game, time, mball, cball));
+                        //    }
+                        //    Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
+                        //}
+                        //System.Console.WriteLine(string.Format("END LOOP"));
+                    }
                 }
-
-                foreach (Sphere cball in StationaryBalls)
-                {
-                    //int time = -1;// CheckForCollisions(mball, cball);
-                    // if (time > 0)
-                    // {
-                    //     System.Console.WriteLine(string.Format(" {0} -- {1} at time {2}", mball.name, cball.name, time));
-
-                    //     Collisions.Add(new Collision(game, time, mball, cball));
-                    // }
-                    //Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
-                }
-                System.Console.WriteLine(string.Format("END LOOP"));
-
+                time += 100;
             }
         }
 
-        private int CheckForCollisions(Sphere mball, Sphere cball)
+        private bool CheckForCollisions(Sphere mball, Sphere cball)
         {
-            if (cball.Equals(mball))
-                return -1;
-
             System.Console.WriteLine(string.Format("checking {0} -- {1}", mball.name, cball.name));
+            if (mball.Equals(cball))
+                return false;
+            float distance =(float) Math.Sqrt(Math.Pow(mball.World.Translation.X - cball.World.Translation.X, 2) +
+                Math.Pow(mball.World.Translation.Z - cball.World.Translation.Z, 2));
+            if (distance < mball.Radius)
+                return true;
+            return false;
+            //if (cball.Equals(mball))
+            //    return -1;
 
-            float a = -0.000015f * 60;
-            float d1y = mball.direction.Z;
-            float p1y = mball.World.Translation.Z;
-            float d1x = mball.direction.X;
-            float p1x = mball.World.Translation.X;
-            float u1 = mball.speed;
-            float d2y = cball.direction.Z;
+            
 
-            float p2y = cball.World.Translation.Z;
-            float d2x = cball.direction.X;
-            float p2x = cball.World.Translation.X;
-            float u2 = cball.speed;
-            float cy = (.5f * a * (d1y - d2y));
-            float cx = (.5f * a * (d1x - d2x));
-            float by = u2 * d2x - u1 * d1x;
-            float bx = u2 * d2y - u1 * d1y;
-            float ay = p2y - p1y;
-            float ax = p2x - p1x;
-            float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
-            float B = 2 * ((by * cy) + (bx * cx));
-            float C = 2 * ((ay * cy) + (ax * cx));
-            float D = 2 * ((ay * by) + (ax * bx));
-            float E = (float)(2 * Math.Pow(ay, 2) + Math.Pow(ax, 2) - 4 * cball.Radius * cball.Radius);
-            double[] sol = new double[4];
-            double[] soli = new double[4];
-            double[] dd = { A, B, C, D, E };
-            int nSol = 0;
-            int ctime = 0;
-            QuarticClass.Quartic(dd, out sol, out soli, out nSol);
-            if (nSol == 4)
-            {
-                double min = 9999999;
-                foreach (double d in sol)
-                {
-                    if (d > 0 && d < min)
-                        min = d;
-                }
-                return ctime = (int)((1000 * min) + shotTime);
-            }
-            else if (nSol == 2)
-            {
-                double min = 9999999;
+            //float a = -0.000015f * 60;
+            //float d1y = mball.direction.Z;
+            //float p1y = mball.World.Translation.Z;
+            //float d1x = mball.direction.X;
+            //float p1x = mball.World.Translation.X;
+            //float u1 = mball.speed;
+            //float d2y = cball.direction.Z;
 
-                for (int i = 0; i < 2; i++)
-                {
-                    if (sol[i] > 0 && sol[i] < min)
-                        min = sol[i];
-                }
-                return ctime = (int)((10000 * min) + shotTime);
-            }
+            //float p2y = cball.World.Translation.Z;
+            //float d2x = cball.direction.X;
+            //float p2x = cball.World.Translation.X;
+            //float u2 = cball.speed;
+            //float cy = (.5f * a * (d1y - d2y));
+            //float cx = (.5f * a * (d1x - d2x));
+            //float by = u2 * d2x - u1 * d1x;
+            //float bx = u2 * d2y - u1 * d1y;
+            //float ay = p2y - p1y;
+            //float ax = p2x - p1x;
+            //float A = (float)(Math.Pow(cy, 2) + Math.Pow(cx, 2));
+            //float B = 2 * ((by * cy) + (bx * cx));
+            //float C = 2 * ((ay * cy) + (ax * cx)) + by * by + bx * bx;
+            //float D = 2 * ((ay * by) + (ax * bx));
+            //float E = (float)(2 * Math.Pow(ay, 2) + Math.Pow(ax, 2) - 4 * cball.Radius * cball.Radius);
+            //double[] sol = new double[4];
+            //double[] soli = new double[4];
+            //double[] dd = { A, B, C, D, E };
+            //int nSol = 0;
+            //int ctime = 0;
+            //QuarticClass.Quartic(dd, out sol, out soli, out nSol);
+            //if (nSol == 4)
+            //{
+            //    double min = 9999999;
+            //    foreach (double d in sol)
+            //    {
+            //        if (d > 0 && d < min)
+            //            min = d;
+            //    }
+            //    return ctime = (int)((1000 * min) + shotTime);
+            //}
+            //else if (nSol == 2)
+            //{
+            //    double min = 9999999;
 
-            return -1;
+            //    for (int i = 0; i < 2; i++)
+            //    {
+            //        if (sol[i] > 0 && sol[i] < min)
+            //            min = sol[i];
+            //    }
+            //    return ctime = (int)((10000 * min) + shotTime);
+            //}
+
+            //return -1;
         }
 
         public bool AllBallsStopped()
