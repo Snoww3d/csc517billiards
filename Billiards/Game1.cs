@@ -124,49 +124,46 @@ namespace Billiards
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
+
+
             currState = Keyboard.GetState();
             AllStopped = ballCollection.AllBallsStopped() ? true : false;
             if (AllStopped)
             {
-               if (currState != prevState && currState.IsKeyDown(Keys.Q))
+                if (currState != prevState && currState.IsKeyDown(Keys.Q))
                 {
                     CueBallMode = !CueBallMode;
                 }
-
 
                 if (CueBallMode)
                 {
                     SetCueballMode();
 
-
-                    if (currState != prevState && currState.IsKeyDown(Keys.Space))
+                    if ((currState != prevState && (currState.IsKeyDown(Keys.Space)) || (Mouse.GetState().LeftButton == ButtonState.Pressed)))
                     {
                         float Power = MathHelper.Clamp(camera.OrbitOffsetDistance * 4, 2, 10);
                         float ShootingAngle = GetShootingAngle();
-                        ballCollection.SetSpeedandAngle(ballCollection.CueBall,Power, ShootingAngle);
+                        ballCollection.SetSpeedandAngle(ballCollection.CueBall, Power, ShootingAngle);
                     }
                 }
                 else
                 {
-
+                    SetGlobalMode();
 
                 }
             }
             else
             {
-               SetGlobalMode();
+                SetGlobalMode();
+                CueBallMode = false;
             }
-
-
 
             camera.LookAt(camera.Position, CameraTarget, Vector3.Up);
 
-
+            prevState = currState;
             base.Update(gameTime);
 
-            prevState = currState;
-            // ball1.World *= Matrix.CreateTranslation(0, 0, -MathHelper.PiOver2);
-
+          
         }
 
         private float GetShootingAngle()
@@ -182,7 +179,7 @@ namespace Billiards
             float ac = a / c;
             float angleA = (float)Math.Asin(ac);
 
-            if (cameraPosition.X < ballPosition.Z)
+            if (cameraPosition.X < ballPosition.X)
             {
                 if (cameraPosition.Z < ballPosition.Z)
                     result = MathHelper.PiOver2 - angleA;
@@ -229,7 +226,7 @@ namespace Billiards
 
         public void SetCueballMode()
         {
-
+            CueBallMode = true;
             CameraTarget = ballCollection.getCueBallPosition();
             camera.OrbitMinZoom = .2f;
             camera.LookAt(camera.Position, CameraTarget, Vector3.Up);
@@ -237,9 +234,10 @@ namespace Billiards
 
         private void SetGlobalMode()
         {
-            CueBallMode = false;
+            //CueBallMode = false;
 
-            camera.Position = new Vector3(0, 40, 0);
+            camera.Move(Vector3.Right, Vector3.One * 4);
+
 
             CameraTarget = Vector3.Zero;
             camera.OrbitMinZoom = 1f;
