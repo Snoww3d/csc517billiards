@@ -37,7 +37,10 @@ namespace Billiards
         public Camera_Old camera_old;
         public BallCollection ballCollection;
         public GraphicsDeviceManager graphics;
+        public bool CueBallMode = false;
         public Vector3 CameraTarget = new Vector3(0, 0, 0);
+        KeyboardState prevState = new KeyboardState();
+        KeyboardState currState = new KeyboardState();
 
 
 
@@ -121,8 +124,17 @@ namespace Billiards
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
+        
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Q))
+            currState = Keyboard.GetState();
+
+            if(currState.IsKeyDown(Keys.Q) && !prevState.IsKeyDown(Keys.Q))
+            {
+                CueBallMode = !CueBallMode;
+            }
+
+
+            if (CueBallMode)
             {
                 CameraTarget = ballCollection.CueBall.World.Translation;
                 camera.OrbitMinZoom = .2f;
@@ -133,17 +145,16 @@ namespace Billiards
                 camera.OrbitMinZoom = 1f;
             }
 
-
             if (camera.Position.Y == 0f)
             {
-                camera.PreferTargetYAxisOrbiting = true; 
+                camera.PreferTargetYAxisOrbiting = true;
             }
             camera.LookAt(camera.Position, CameraTarget, Vector3.Up);
 
 
             base.Update(gameTime);
 
-
+            prevState = currState;
             // ball1.World *= Matrix.CreateTranslation(0, 0, -MathHelper.PiOver2);
 
         }
