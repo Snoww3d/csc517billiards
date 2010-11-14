@@ -125,11 +125,7 @@ namespace Billiards
                 this.Exit();
 
             currState = Keyboard.GetState();
-
-
             AllStopped = ballCollection.AllBallsStopped() ? true : false;
-
-
             if (AllStopped)
             {
 
