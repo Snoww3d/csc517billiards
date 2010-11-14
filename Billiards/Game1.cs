@@ -124,20 +124,27 @@ namespace Billiards
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-        
+
 
             currState = Keyboard.GetState();
 
-            if(currState.IsKeyDown(Keys.Q) && !prevState.IsKeyDown(Keys.Q))
+            if (ballCollection.AllBallsStopped())
             {
-                CueBallMode = !CueBallMode;
+                CueBallMode = true;
             }
+            
+          
 
 
             if (CueBallMode)
             {
                 CameraTarget = ballCollection.CueBall.World.Translation;
                 camera.OrbitMinZoom = .2f;
+
+                if (currState.IsKeyDown(Keys.Space))
+                {
+                    ballCollection.CueBall.SetSpeedandAngle(3, 45);
+                }
             }
             else
             {
