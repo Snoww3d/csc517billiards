@@ -74,7 +74,7 @@ namespace Billiards
             float aspectRatio = (float)windowWidth / (float)windowHeight;
 
             camera.Perspective(CAMERA_FOV, aspectRatio, CAMERA_ZNEAR, CAMERA_ZFAR);
-            camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);
+            camera.Position = new Vector3(-5.0f, CAMERA_OFFSET, 5.0f);
             camera.OrbitMinZoom = 1.5f;
             camera.OrbitMaxZoom = 5.0f;
             camera.OrbitOffsetDistance = camera.OrbitMinZoom;
@@ -123,18 +123,11 @@ namespace Billiards
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
-
-
-
+            
             currState = Keyboard.GetState();
 
-            if (ballCollection.AllBallsStopped())
-            {
-                CueBallMode = true;
-            }
-            
-          
 
+            CueBallMode = ballCollection.AllBallsStopped() ? true : false;
 
             if (CueBallMode)
             {
