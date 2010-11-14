@@ -128,8 +128,7 @@ namespace Billiards
             AllStopped = ballCollection.AllBallsStopped() ? true : false;
             if (AllStopped)
             {
-
-                if (currState != prevState && currState.IsKeyDown(Keys.Q))
+               if (currState != prevState && currState.IsKeyDown(Keys.Q))
                 {
                     CueBallMode = !CueBallMode;
                 }
@@ -144,7 +143,7 @@ namespace Billiards
                     {
                         float Power = MathHelper.Clamp(camera.OrbitOffsetDistance * 4, 2, 10);
                         float ShootingAngle = GetShootingAngle();
-                        ballCollection.CueBall.SetSpeedandAngle(Power, ShootingAngle);
+                        ballCollection.SetSpeedandAngle(ballCollection.CueBall,Power, ShootingAngle);
                     }
                 }
                 else
@@ -155,7 +154,7 @@ namespace Billiards
             }
             else
             {
-                //SetGlobalMode();
+               SetGlobalMode();
             }
 
 
@@ -238,6 +237,8 @@ namespace Billiards
 
         private void SetGlobalMode()
         {
+            CueBallMode = false;
+
             camera.Position = new Vector3(0, 40, 0);
 
             CameraTarget = Vector3.Zero;

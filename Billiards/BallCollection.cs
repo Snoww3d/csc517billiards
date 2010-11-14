@@ -332,7 +332,7 @@ namespace Billiards
                         //    Collisions.Add(new Collision(game, time, mball, cball));
                         //}
                         //Collisions = Collisions.OrderBy(x => x.collisionTime).ToList();
-                    }
+                     }
 
                     foreach (Sphere cball in StationaryBalls)
                     {
