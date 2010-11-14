@@ -323,7 +323,7 @@ namespace Billiards
                         if (CheckForCollisions(MovingBalls[i], MovingBalls[j]))
                         {
                             SetSpeedandAngle( MovingBalls[j],MovingBalls[i].speed, (float)MovingBalls[i].angle);
-                            MovingBalls[i].SetSpeedandAngle(0, 0);
+                            MovingBalls[i].SetSpeedandAngle(1, (float)MovingBalls[i].angle);
                             
                         }
                         //int time = CheckForCollisions(MovingBalls[i], cball);
@@ -341,7 +341,7 @@ namespace Billiards
                         if (CheckForCollisions(MovingBalls[i], StationaryBalls[j]))
                         {
                             SetSpeedandAngle(StationaryBalls[j],MovingBalls[i].speed, (float)MovingBalls[i].angle);
-                            MovingBalls[i].SetSpeedandAngle(0, 0);
+                            MovingBalls[i].SetSpeedandAngle(1, (float)MovingBalls[i].angle);
                         }
                         //    int time = -1;
                         //    time = CheckForCollisions(MovingBalls[i], cball);
@@ -358,7 +358,7 @@ namespace Billiards
                     MovingBalls[i].World *= Matrix.CreateTranslation(-translation); 
                 }
                 time += 10;
-                
+                translation = Vector3.Zero;
             }
         }
 
