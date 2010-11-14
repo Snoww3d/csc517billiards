@@ -224,8 +224,8 @@ namespace Billiards
 
                 Sphere ball = StationaryBalls[i];
                 game.Components.Add(ball);
-                SetSpeedandAngle(ball,3,45);
-                i--;
+                //SetSpeedandAngle(ball,3,45);
+                //i--;
 
             }
 
