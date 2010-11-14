@@ -47,7 +47,7 @@ namespace Billiards
             : base(game)
         {
             this.game = game;
-            Matrix CueBallWorld = Matrix.CreateWorld(new Vector3(-1.1f, 0f, 0f), Vector3.Right, Vector3.Up);
+            Matrix CueBallWorld = Matrix.CreateWorld(new Vector3(-.68f, 0f, 0f), Vector3.Right, Vector3.Up);
 
             Matrix Ball1World = Matrix.CreateWorld(new Vector3(.58f, 0f, 0f), new Vector3(1, -4f, 1), Vector3.Up);
             Matrix Ball15World = Matrix.CreateWorld(new Vector3(.63f, 0f, 0.05f), new Vector3(1, -4f, 1), Vector3.Up);
@@ -73,9 +73,7 @@ namespace Billiards
                                 game.Content.Load<Texture2D>(@"Images/Ballcue"),
                                 ref CueBallWorld,
                                 camera);
-
-
-
+            
             ball1 = new Sphere(game,
                                   "1",
                                   20,
@@ -411,6 +409,11 @@ namespace Billiards
                 StationaryBalls.Remove(ball);
             if(!MovingBalls.Contains(ball))
                 MovingBalls.Add(ball);
+        }
+
+        public Vector3 getCueBallPosition()
+        { 
+          return CueBall.World.Translation;
         }
     }
 }

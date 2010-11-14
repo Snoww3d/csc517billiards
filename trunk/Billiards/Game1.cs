@@ -23,7 +23,7 @@ namespace Billiards
         private const float CAMERA_FOV = 90.0f;
         private const float CAMERA_ZNEAR = 0.01f;
         private const float CAMERA_ZFAR = 100.0f;
-        private const float CAMERA_OFFSET = 0.5f;
+        private const float CAMERA_OFFSET = 0.0f;
         private const float CAMERA_BOUNDS_MIN_X = -FLOOR_WIDTH / 2.0f;
         private const float CAMERA_BOUNDS_MAX_X = FLOOR_WIDTH / 2.0f;
         private const float CAMERA_BOUNDS_MIN_Y = CAMERA_OFFSET;
@@ -37,12 +37,12 @@ namespace Billiards
         public Camera_Old camera_old;
         public BallCollection ballCollection;
         public GraphicsDeviceManager graphics;
-        public bool CueBallMode = false;
+        public bool AllStopped = true;
+        public bool CueBallMode = true;
+
         public Vector3 CameraTarget = new Vector3(0, 0, 0);
         KeyboardState prevState = new KeyboardState();
         KeyboardState currState = new KeyboardState();
-
-
 
         protected Model table;
 
@@ -74,22 +74,23 @@ namespace Billiards
             float aspectRatio = (float)windowWidth / (float)windowHeight;
 
             camera.Perspective(CAMERA_FOV, aspectRatio, CAMERA_ZNEAR, CAMERA_ZFAR);
-            camera.Position = new Vector3(-5.0f, CAMERA_OFFSET, 5.0f);
+            camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);
             camera.OrbitMinZoom = 1.5f;
             camera.OrbitMaxZoom = 5.0f;
+
             camera.OrbitOffsetDistance = camera.OrbitMinZoom;
             camera.CurrentBehavior = Camera.Behavior.Orbit;
-            camera.Rotate(0.0f, -30.0f, 0.0f);
-            camera.LookAt(CameraTarget);
+            camera.Rotate(-90.0f, -7.0f, 0.0f);
+
+
 
             ballCollection = new BallCollection(this, camera);
             Components.Add(ballCollection);
-
+            SetCueballMode();
 
 
             FrameRateDisplay frameRateDisplay = new FrameRateDisplay(this);
             Components.Add(frameRateDisplay);
-
 
             base.Initialize();
         }
@@ -101,7 +102,6 @@ namespace Billiards
         protected override void LoadContent()
         {
             table = Content.Load<Model>(@"PoolTable/pooltable");
-
         }
 
         /// <summary>
@@ -123,32 +123,47 @@ namespace Billiards
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
-            
+
             currState = Keyboard.GetState();
 
 
-            CueBallMode = ballCollection.AllBallsStopped() ? true : false;
+            AllStopped = ballCollection.AllBallsStopped() ? true : false;
 
-            if (CueBallMode)
+
+            if (AllStopped)
             {
-                CameraTarget = ballCollection.CueBall.World.Translation;
-                camera.OrbitMinZoom = .2f;
 
-                if (currState.IsKeyDown(Keys.Space))
+                if (currState != prevState && currState.IsKeyDown(Keys.Q))
                 {
-                    ballCollection.CueBall.SetSpeedandAngle(3, 45);
+                    CueBallMode = !CueBallMode;
+                }
+
+
+                if (CueBallMode)
+                {
+                    SetCueballMode();
+
+
+                    if (currState != prevState && currState.IsKeyDown(Keys.Space))
+                    {
+                        float Power = MathHelper.Clamp(camera.OrbitOffsetDistance * 4, 2, 10);
+                        float ShootingAngle = GetShootingAngle();
+                        ballCollection.CueBall.SetSpeedandAngle(Power, ShootingAngle);
+                    }
+                }
+                else
+                {
+
+
                 }
             }
             else
             {
-                CameraTarget = Vector3.Zero;
-                camera.OrbitMinZoom = 1f;
+                //SetGlobalMode();
             }
 
-            if (camera.Position.Y == 0f)
-            {
-                camera.PreferTargetYAxisOrbiting = true;
-            }
+
+
             camera.LookAt(camera.Position, CameraTarget, Vector3.Up);
 
 
@@ -158,6 +173,39 @@ namespace Billiards
             // ball1.World *= Matrix.CreateTranslation(0, 0, -MathHelper.PiOver2);
 
         }
+
+        private float GetShootingAngle()
+        {
+            double result = 45;
+
+            Vector3 cameraPosition = camera.Position;
+            Vector3 ballPosition = ballCollection.getCueBallPosition();
+
+            float a = Math.Abs(ballPosition.Z - cameraPosition.Z);
+            float b = Math.Abs(ballPosition.X - cameraPosition.X);
+            float c = (float)Math.Sqrt(a * a + b * b);
+            float ac = a / c;
+            float angleA = (float)Math.Asin(ac);
+
+            if (cameraPosition.X < ballPosition.Z)
+            {
+                if (cameraPosition.Z < ballPosition.Z)
+                    result = MathHelper.PiOver2 - angleA;
+                else
+                    result = MathHelper.PiOver2 + angleA;
+            }
+            else
+            {
+                if (cameraPosition.Z < ballPosition.Z)
+                    result = 3 * MathHelper.PiOver2 + angleA;
+                else
+                    result = 3 * MathHelper.PiOver2 - angleA;
+            }
+
+
+            return (float)result;
+        }
+
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -182,5 +230,23 @@ namespace Billiards
 
             base.Draw(gameTime);
         }
+
+
+        public void SetCueballMode()
+        {
+
+            CameraTarget = ballCollection.getCueBallPosition();
+            camera.OrbitMinZoom = .2f;
+            camera.LookAt(camera.Position, CameraTarget, Vector3.Up);
+        }
+
+        private void SetGlobalMode()
+        {
+            camera.Position = new Vector3(0, 40, 0);
+
+            CameraTarget = Vector3.Zero;
+            camera.OrbitMinZoom = 1f;
+        }
+
     }
 }
