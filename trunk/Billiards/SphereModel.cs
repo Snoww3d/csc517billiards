@@ -217,7 +217,6 @@ namespace Billiards
             this.speed = TranslatedSpeed;
             this.angle = Angle;
             this.direction = new Vector3((float)Math.Sin(this.angle), 0f, (float)Math.Cos(this.angle));
-
         }
 
     }

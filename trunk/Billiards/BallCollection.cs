@@ -25,8 +25,7 @@ namespace Billiards
         public List<Sphere> StationaryBalls = new List<Sphere>();
         public List<Sphere> MovingBalls = new List<Sphere>();
         public List<Collision> Collisions = new List<Collision>();
-
-
+        
         public Sphere CueBall;
         public Sphere ball1;
         public Sphere ball2;
@@ -220,13 +219,21 @@ namespace Billiards
 
             Random g = new Random();
 
-            foreach (Sphere ball in StationaryBalls)
+            for (int i = 0; i < StationaryBalls.Count; i++)
             {
+
+                Sphere ball = StationaryBalls[i];
                 game.Components.Add(ball);
-                float d = MathHelper.Clamp(-MathHelper.Pi + (float)g.NextDouble() * 2 * MathHelper.Pi, -MathHelper.Pi, MathHelper.Pi);
-                float e = MathHelper.Clamp(2 + (float)g.NextDouble() * 6,2,8);
-                ball.SetSpeedandAngle(e, d);
+                SetSpeedandAngle(ball,3,45);
+                i--;
+
             }
+
+            
+
+
+
+       
         }
 
         /// <summary>
@@ -245,9 +252,6 @@ namespace Billiards
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-
-
-
             if (MovingBalls.Count == 0)
             {
                 shotTime = 0;
@@ -255,7 +259,7 @@ namespace Billiards
                 //{
                 // }
 
-                CueBall.SetSpeedandAngle(10, (float)MathHelper.PiOver4);
+               // CueBall.SetSpeedandAngle(10, (float)MathHelper.PiOver4);
 
                 // ball1.SetSpeedandAngle(5, (float)3 * MathHelper.PiOver2);
                 //MovingBalls.Add(ball1);
@@ -282,6 +286,17 @@ namespace Billiards
                     // CheckForCollisions();
                 }
             }
+
+            for (int i = 0; i < MovingBalls.Count;i++)
+            {
+                if (MovingBalls[i].speed <= 0)
+                {
+                    MovingBalls.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            
             base.Update(gameTime);
         }
 
@@ -382,6 +397,20 @@ namespace Billiards
             }
 
             return -1;
+        }
+
+        public bool AllBallsStopped()
+        {
+            return this.MovingBalls.Count == 0;
+        }
+
+        public void SetSpeedandAngle(Sphere ball, float Speed, float Angle)
+        {
+            ball.SetSpeedandAngle(Speed, Angle);
+            if (StationaryBalls.Contains(ball))
+                StationaryBalls.Remove(ball);
+            if(!MovingBalls.Contains(ball))
+                MovingBalls.Add(ball);
         }
     }
 }
