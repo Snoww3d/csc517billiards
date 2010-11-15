@@ -364,7 +364,7 @@ namespace Billiards
 
         private bool CheckForCollisions(Sphere mball, Sphere cball)
         {
-            System.Console.WriteLine(string.Format("checking {0} -- {1}", mball.name, cball.name));
+            //System.Console.WriteLine(string.Format("checking {0} -- {1}", mball.name, cball.name));
             if (mball.Equals(cball))
                 return false;
             float distance =(float) Math.Sqrt(Math.Pow(mball.World.Translation.X - cball.World.Translation.X, 2) +
