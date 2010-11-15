@@ -45,6 +45,7 @@ namespace Billiards
         KeyboardState currState = new KeyboardState();
 
         protected Model table;
+        Model Skybox;
 
         protected List<Vector3> StartingPositions;
         protected Matrix TableWorld = Matrix.CreateWorld(new Vector3(0f, -0.035f, 0f), Vector3.Forward, Vector3.Up);
@@ -102,6 +103,8 @@ namespace Billiards
         protected override void LoadContent()
         {
             table = Content.Load<Model>(@"PoolTable/pooltable");
+            Skybox = Content.Load<Model>(@"Models/SkyBox");
+          
         }
 
         /// <summary>
@@ -214,6 +217,20 @@ namespace Billiards
                 {
                     effect.EnableDefaultLighting();
                     effect.World = TableWorld;
+                    effect.View = camera.ViewMatrix;
+                    effect.Projection = camera.ProjectionMatrix;
+                }
+                mesh.Draw();
+            }
+
+            foreach (ModelMesh mesh in Skybox.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    Matrix skyboxWorld = TableWorld * Matrix.CreateTranslation(new Vector3(0,8.1f,0));
+                    skyboxWorld *= Matrix.CreateScale(0.4f);
+                    effect.World = skyboxWorld;
                     effect.View = camera.ViewMatrix;
                     effect.Projection = camera.ProjectionMatrix;
                 }
