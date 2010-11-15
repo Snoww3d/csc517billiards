@@ -103,6 +103,8 @@ namespace Billiards
         protected override void LoadContent()
         {
             table = Content.Load<Model>(@"PoolTable/pooltable");
+
+       // Model and Textures from  http://www.riemers.net/eng/Tutorials/XNA/Csharp/Series2/Skybox.php
             Skybox = Content.Load<Model>(@"Models/SkyBox");
           
         }
