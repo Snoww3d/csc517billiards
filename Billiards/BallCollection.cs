@@ -293,6 +293,7 @@ namespace Billiards
             {
                 if (MovingBalls[i].speed <= 0)
                 {
+                    MovingBalls[i].SetSpeedandAngle(0f, 0f);
                     StationaryBalls.Add(MovingBalls[i]);
                     MovingBalls.RemoveAt(i);
 
@@ -345,7 +346,7 @@ namespace Billiards
                                     result = 3 * MathHelper.PiOver2 - angle;
                             }
                             SetSpeedandAngle(MovingBalls[j],MovingBalls[i].speed, result);
-                            MovingBalls[i].SetSpeedandAngle(0, result);
+                            MovingBalls[i].SetSpeedandAngle(0, -result);
 
                             //cball.World *= Matrix.CreateTranslation(cball.speed / 50 * cball.direction);
                             break;
@@ -370,26 +371,26 @@ namespace Billiards
                             float dz = mball.World.Translation.Z - cball.World.Translation.Z;
                             float result = 0;
                             float angle =(float) Math.Acos(dx/Math.Sqrt(dx*dx + dz * dz));
-                            if (mball.World.Translation.X < cball.World.Translation.X)
+                            if (mball.World.Translation.Z < cball.World.Translation.Z)
                             {
-                                if (mball.World.Translation.Z < cball.World.Translation.Z)
-                                    result = MathHelper.PiOver2 - angle;
+                                if (mball.World.Translation.X < cball.World.Translation.X)
+                                    result = -MathHelper.PiOver2 - angle;
                                 else
-                                    result = MathHelper.PiOver2 + angle;
+                                    result = -MathHelper.PiOver2 + angle;
                             }
                             else
                             {
-                                if (mball.World.Translation.Z < cball.World.Translation.Z)
+                                if (mball.World.Translation.X < cball.World.Translation.X)
                                     result = 3 * MathHelper.PiOver2 + angle;
                                 else
                                     result = 3 * MathHelper.PiOver2 - angle;
                                 
                             }
                             SetSpeedandAngle(StationaryBalls[j],MovingBalls[i].speed * 150, result);
-                            MovingBalls[i].SetSpeedandAngle(1, -result);
+                            MovingBalls[i].SetSpeedandAngle(.5f, -result);
                             
-                            cball.World *= Matrix.CreateTranslation(mball.Radius * 1.5f * cball.direction);
-                            mball.World *= Matrix.CreateTranslation(mball.Radius * 1.5f * mball.direction);
+                            cball.World *= Matrix.CreateTranslation(mball.Radius * 2f * cball.direction);
+                            mball.World *= Matrix.CreateTranslation(mball.Radius * 2f * mball.direction);
                             break;
                         }
                         //    int time = -1;
@@ -424,8 +425,8 @@ namespace Billiards
                 cball.lastCollider = mball;
                 return true;
             }
-            //mball.lastCollider = mball;
-            //cball.lastCollider = cball;
+            mball.lastCollider = mball;
+            cball.lastCollider = cball;
             return false;
             //if (cball.Equals(MovingBalls[i]))
             //    return -1;
