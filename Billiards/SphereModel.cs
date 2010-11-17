@@ -28,6 +28,7 @@ namespace Billiards
         private float TranslatedSpeed;
         public Vector3 direction;
         public double angle;
+        public Sphere lastCollider;
         #endregion
 
         #region Properties
@@ -63,6 +64,7 @@ namespace Billiards
             World = world;
             this.camera = camera;
             this.name = ballName;
+            lastCollider = this;
         }
         #endregion
 
