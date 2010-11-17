@@ -165,8 +165,7 @@ namespace Billiards
                         ballCollection.SetSpeedandAngle(ballCollection.CueBall, Power, ShootingAngle);
 
                         camera.CurrentBehavior = Camera.Behavior.Spectator;
-                        camera.Position = new Vector3(0,1 , 0);
-                        
+                        camera.Position = new Vector3(0, 1, 0);
                         camera.OrbitOffsetDistance = 2f;
                         camera.CurrentBehavior = Camera.Behavior.Orbit;
                         camera.OrbitTarget = Vector3.Zero;
@@ -184,7 +183,7 @@ namespace Billiards
             else
             {
                 SetGlobalMode();
-                CueBallMode = false;
+                //CueBallMode = false;
             }
 
             camera.LookAt(camera.Position, CameraTarget, Vector3.Up);
