@@ -821,10 +821,14 @@ namespace Billiards
                 // to determine the correct distance from the target.
 
                 eye = target + zAxis * orbitOffsetLength;
+                if (eye.Y < 0.05f)
+                    eye.Y = 0.05f;
+               
             }
 
             viewMatrix.M41 = -Vector3.Dot(xAxis, eye);
             viewMatrix.M42 = -Vector3.Dot(yAxis, eye);
+          
             viewMatrix.M43 = -Vector3.Dot(zAxis, eye);
 
             viewDir.X = -zAxis.X;

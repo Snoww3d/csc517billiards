@@ -37,6 +37,7 @@ namespace Billiards
         public Camera_Old camera_old;
         public BallCollection ballCollection;
         public GraphicsDeviceManager graphics;
+        public bool LineUpCueBall = true;
         public bool AllStopped = true;
         public bool CueBallMode = true;
 
@@ -78,7 +79,7 @@ namespace Billiards
             camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);
             camera.OrbitMinZoom = 1.5f;
             camera.OrbitMaxZoom = 5.0f;
-
+            camera.PreferTargetYAxisOrbiting = true;
             camera.OrbitOffsetDistance = camera.OrbitMinZoom;
             camera.CurrentBehavior = Camera.Behavior.Orbit;
             camera.Rotate(-90.0f, -7.0f, 0.0f);
@@ -104,9 +105,9 @@ namespace Billiards
         {
             table = Content.Load<Model>(@"PoolTable/pooltable");
 
-       // Model and Textures from  http://www.riemers.net/eng/Tutorials/XNA/Csharp/Series2/Skybox.php
+            // Model and Textures from  http://www.riemers.net/eng/Tutorials/XNA/Csharp/Series2/Skybox.php
             Skybox = Content.Load<Model>(@"Models/SkyBox");
-          
+
         }
 
         /// <summary>
@@ -139,6 +140,7 @@ namespace Billiards
                 {
                     CueBallMode = !CueBallMode;
                 }
+               
 
                 if (CueBallMode)
                 {
@@ -149,6 +151,12 @@ namespace Billiards
                         float Power = MathHelper.Clamp(camera.OrbitOffsetDistance * 4, 2, 10);
                         float ShootingAngle = GetShootingAngle();
                         ballCollection.SetSpeedandAngle(ballCollection.CueBall, Power, ShootingAngle);
+                        camera.OrbitOffsetDistance = 5f;
+
+
+                       camera.Rotate(0, -30f, 0);
+                       LineUpCueBall = true;
+                       
                     }
                 }
                 else
@@ -168,7 +176,7 @@ namespace Billiards
             prevState = currState;
             base.Update(gameTime);
 
-          
+
         }
 
         private float GetShootingAngle()
@@ -230,7 +238,7 @@ namespace Billiards
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    Matrix skyboxWorld = TableWorld * Matrix.CreateTranslation(new Vector3(0,8.1f,0));
+                    Matrix skyboxWorld = TableWorld * Matrix.CreateTranslation(new Vector3(0, 8.1f, 0));
                     skyboxWorld *= Matrix.CreateScale(0.4f);
                     effect.World = skyboxWorld;
                     effect.View = camera.ViewMatrix;
@@ -257,6 +265,7 @@ namespace Billiards
 
             camera.Move(Vector3.Right, Vector3.One * 4);
 
+            //
 
             CameraTarget = Vector3.Zero;
             camera.OrbitMinZoom = 1f;
