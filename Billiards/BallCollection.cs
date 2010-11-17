@@ -331,23 +331,24 @@ namespace Billiards
                             float dz = mball.World.Translation.Z - cball.World.Translation.Z;
                             float result = 0;
                             float angle =(float) Math.Acos(dz/Math.Sqrt(dx*dx + dz * dz));
-                            if (mball.World.Translation.X < cball.World.Translation.X)
+                            if (mball.World.Translation.Z < cball.World.Translation.Z)
                             {
-                                if (mball.World.Translation.Z < cball.World.Translation.Z)
+                                if (mball.World.Translation.X < cball.World.Translation.X)
                                     result = MathHelper.PiOver2 - angle;
                                 else
                                     result = MathHelper.PiOver2 + angle;
                             }
                             else
                             {
-                                if (mball.World.Translation.Z < cball.World.Translation.Z)
+                                if (mball.World.Translation.X < cball.World.Translation.X)
                                     result = 3 * MathHelper.PiOver2 + angle;
                                 else
                                     result = 3 * MathHelper.PiOver2 - angle;
                             }
-                            SetSpeedandAngle(MovingBalls[j],MovingBalls[i].speed, result);
-                            MovingBalls[i].SetSpeedandAngle(0, -result);
-
+                            SetSpeedandAngle(MovingBalls[j],MovingBalls[i].speed * 150, result);
+                            MovingBalls[i].SetSpeedandAngle(.5f, -result);
+                            cball.World *= Matrix.CreateTranslation(mball.Radius * cball.direction);
+                            mball.World *= Matrix.CreateTranslation(mball.Radius * mball.direction);
                             //cball.World *= Matrix.CreateTranslation(cball.speed / 50 * cball.direction);
                             break;
                         }
@@ -389,8 +390,8 @@ namespace Billiards
                             SetSpeedandAngle(StationaryBalls[j],MovingBalls[i].speed * 150, result);
                             MovingBalls[i].SetSpeedandAngle(.5f, -result);
                             
-                            cball.World *= Matrix.CreateTranslation(mball.Radius * 2f * cball.direction);
-                            mball.World *= Matrix.CreateTranslation(mball.Radius * 2f * mball.direction);
+                            cball.World *= Matrix.CreateTranslation(mball.Radius / 2 * cball.direction);
+                            mball.World *= Matrix.CreateTranslation(mball.Radius / 2 * mball.direction);
                             break;
                         }
                         //    int time = -1;
