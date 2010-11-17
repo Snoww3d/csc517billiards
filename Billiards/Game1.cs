@@ -66,7 +66,7 @@ namespace Billiards
         protected override void Initialize()
         {
             // Setup the window to be a quarter the size of the desktop.
-         
+
             windowWidth = GraphicsDevice.DisplayMode.Height;
             windowHeight = GraphicsDevice.DisplayMode.Height;
             //graphics.PreferredBackBufferWidth = 1024;
@@ -77,9 +77,9 @@ namespace Billiards
             Components.Add(camera);
 
             GraphicsDevice device = graphics.GraphicsDevice;
-            
 
-           /// GraphicsDeviceManager graphicsManger; 
+
+            /// GraphicsDeviceManager graphicsManger; 
 
             float aspectRatio = (float)windowWidth / (float)windowHeight;
             camera.Perspective(CAMERA_FOV, aspectRatio, CAMERA_ZNEAR, CAMERA_ZFAR);
@@ -156,18 +156,18 @@ namespace Billiards
                 if (CueBallMode)
                 {
                     SetCueballMode();
-                    camera.OrbitOffsetDistance = 1f;
+                 
                     if ((currState != prevState && (currState.IsKeyDown(Keys.Space)) || (Mouse.GetState().LeftButton == ButtonState.Pressed)))
                     {
                         //  float Power = MathHelper.Clamp(camera.OrbitOffsetDistance * 4, 2, 10);
-                        float Power = 5;
+                        float Power = 8;
                         float ShootingAngle = GetShootingAngle();
                         ballCollection.SetSpeedandAngle(ballCollection.CueBall, Power, ShootingAngle);
-                        camera.OrbitOffsetDistance = 5f;
-                        camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);
+                      
+                      camera.Position = new Vector3(3.0f, CAMERA_OFFSET, 4.0f);
 
 
-                        // camera.Rotate(0, -30f, 0);
+                        camera.Rotate(0, -30f, 0);
                         //LineUpCueBall = true;
 
                     }
