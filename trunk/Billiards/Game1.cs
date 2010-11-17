@@ -34,7 +34,7 @@ namespace Billiards
         private int windowHeight;
 
         private CameraComponent camera;
-        public Camera_Old camera_old;
+
         public BallCollection ballCollection;
         public GraphicsDeviceManager graphics;
         public bool LineUpCueBall = true;
@@ -66,17 +66,23 @@ namespace Billiards
         protected override void Initialize()
         {
             // Setup the window to be a quarter the size of the desktop.
-            windowWidth = GraphicsDevice.DisplayMode.Width;
+         
+            windowWidth = GraphicsDevice.DisplayMode.Height;
             windowHeight = GraphicsDevice.DisplayMode.Height;
-
+            //graphics.PreferredBackBufferWidth = 1024;
+            //graphics.PreferredBackBufferHeight = 800;
+            graphics.IsFullScreen = true;
+            graphics.ApplyChanges();
             camera = new CameraComponent(this);
             Components.Add(camera);
 
             GraphicsDevice device = graphics.GraphicsDevice;
-            float aspectRatio = (float)windowWidth / (float)windowHeight;
+            
 
+           /// GraphicsDeviceManager graphicsManger; 
+
+            float aspectRatio = (float)windowWidth / (float)windowHeight;
             camera.Perspective(CAMERA_FOV, aspectRatio, CAMERA_ZNEAR, CAMERA_ZFAR);
-            camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);
             camera.OrbitMinZoom = 1.5f;
             camera.OrbitMaxZoom = 5.0f;
             camera.PreferTargetYAxisOrbiting = true;
@@ -134,29 +140,36 @@ namespace Billiards
 
             currState = Keyboard.GetState();
             AllStopped = ballCollection.AllBallsStopped() ? true : false;
+            if (currState != prevState && currState.IsKeyDown(Keys.F))
+            {
+                graphics.ToggleFullScreen();
+                graphics.ApplyChanges();
+            }
             if (AllStopped)
             {
                 if (currState != prevState && currState.IsKeyDown(Keys.Q))
                 {
                     CueBallMode = !CueBallMode;
                 }
-               
+
 
                 if (CueBallMode)
                 {
                     SetCueballMode();
-
+                    camera.OrbitOffsetDistance = 1f;
                     if ((currState != prevState && (currState.IsKeyDown(Keys.Space)) || (Mouse.GetState().LeftButton == ButtonState.Pressed)))
                     {
-                        float Power = MathHelper.Clamp(camera.OrbitOffsetDistance * 4, 2, 10);
+                        //  float Power = MathHelper.Clamp(camera.OrbitOffsetDistance * 4, 2, 10);
+                        float Power = 5;
                         float ShootingAngle = GetShootingAngle();
                         ballCollection.SetSpeedandAngle(ballCollection.CueBall, Power, ShootingAngle);
                         camera.OrbitOffsetDistance = 5f;
+                        camera.Position = new Vector3(0.0f, CAMERA_OFFSET, 0.0f);
 
 
-                       camera.Rotate(0, -30f, 0);
-                       LineUpCueBall = true;
-                       
+                        // camera.Rotate(0, -30f, 0);
+                        //LineUpCueBall = true;
+
                     }
                 }
                 else
