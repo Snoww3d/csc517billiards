@@ -215,7 +215,7 @@ namespace Billiards
 
         public void SetSpeedandAngle(float Speed, float Angle)
         {
-            TranslatedSpeed = Speed / 300f;
+            TranslatedSpeed = Speed / 150f;
             this.speed = TranslatedSpeed;
             this.angle = Angle;
             this.direction = new Vector3((float)Math.Sin(this.angle), 0f, (float)Math.Cos(this.angle));
