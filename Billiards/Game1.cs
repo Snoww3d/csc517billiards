@@ -69,8 +69,8 @@ namespace Billiards
 
             windowWidth = GraphicsDevice.DisplayMode.Height;
             windowHeight = GraphicsDevice.DisplayMode.Height;
-            //graphics.PreferredBackBufferWidth = 1024;
-            //graphics.PreferredBackBufferHeight = 800;
+          graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 800;
             graphics.IsFullScreen = true;
             graphics.ApplyChanges();
             camera = new CameraComponent(this);
@@ -163,11 +163,14 @@ namespace Billiards
                         float Power = 8;
                         float ShootingAngle = GetShootingAngle();
                         ballCollection.SetSpeedandAngle(ballCollection.CueBall, Power, ShootingAngle);
-                      
-                      camera.Position = new Vector3(3.0f, CAMERA_OFFSET, 4.0f);
 
-
-                        camera.Rotate(0, -30f, 0);
+                        camera.CurrentBehavior = Camera.Behavior.Spectator;
+                        camera.Position = new Vector3(0,1 , 0);
+                        
+                        camera.OrbitOffsetDistance = 2f;
+                        camera.CurrentBehavior = Camera.Behavior.Orbit;
+                        camera.OrbitTarget = Vector3.Zero;
+                        //camera.Rotate(0, -30f, 0);
                         //LineUpCueBall = true;
 
                     }
